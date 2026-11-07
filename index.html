@@ -12,7 +12,7 @@
   --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
   --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
-  --r: 6px; --gap: clamp(12px, 2vw, 20px);
+  --p-r: #b8322a; --p-d: #2f5ea8; --r: 6px; --gap: clamp(12px, 2vw, 20px);
 }
 @media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
   --bg: #0d0f0a; --surface: #14170f; --sunk: #1a1e14; --ink: #ebeee2; --muted: #9ea392; --faint: #6f7566; --line: #262b1e;
@@ -336,6 +336,122 @@ html.reading { overflow: hidden; }
 .rd-fig { margin: 0; border-radius: 6px; overflow: hidden; position: relative; max-width: 100%; }
 .rd-fig .pic { max-height: 420px; aspect-ratio: 16 / 9; }
 .rd-fig figcaption { font-family: var(--mono); font-size: 10.5px; color: var(--faint); padding: 6px 2px 0; }
+/* learn */
+.rail a.rail-learn { color: var(--accent); }
+.cb { display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; gap: 14px; align-items: center; padding: 14px 18px; border: 1px solid var(--line); border-radius: 7px; background: var(--surface); text-decoration: none; transition: border-color .2s, transform .25s; }
+.cb:hover { border-color: var(--accent); transform: translateY(-2px); }
+.cb-k { font-family: var(--mono); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--bg); background: var(--accent); padding: 2px 8px; border-radius: 3px; }
+.cb b { font-family: var(--display); font-stretch: 85%; font-size: 1.05rem; }
+.cb-p { display: flex; gap: 3px; } .cb-p i { width: 14px; height: 6px; border-radius: 2px; background: var(--line); } .cb-p i.on { background: var(--accent); }
+.cb-go { font-size: 20px; color: var(--accent); }
+@media (max-width: 640px) { .cb { grid-template-columns: auto minmax(0, 1fr) auto; } .cb-p { display: none; } }
+.lh { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 24px; align-items: center; padding: clamp(16px, 2.6vw, 26px); border: 1px solid var(--line); border-radius: 8px; background: var(--surface); }
+.lh h3 { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: clamp(1.5rem, 3vw, 2rem); margin: 0 0 6px; }
+.lh p { margin: 0 0 14px; color: var(--muted); max-width: 64ch; }
+.lh-go { display: inline-flex; font-weight: 600; color: var(--bg); background: var(--accent); padding: 9px 16px; border-radius: 5px; text-decoration: none; transition: transform .2s; } .lh-go:hover { transform: translateX(3px); }
+.panel .lh-go { align-self: flex-start; }
+.lh-ring { --p: 0; width: 112px; height: 112px; border-radius: 50%; display: grid; place-items: center; align-content: center; background: radial-gradient(closest-side, var(--surface) 78%, transparent 80%), conic-gradient(var(--accent) calc(var(--p) * 360deg), var(--line) 0); }
+.lh-ring b { font-family: var(--display); font-size: 26px; line-height: 1; } .lh-ring span { font-size: 11px; color: var(--muted); }
+@media (max-width: 560px) { .lh { grid-template-columns: 1fr; } .lh-ring { width: 86px; height: 86px; } }
+.course { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: var(--gap); }
+.cl { display: flex; flex-direction: column; height: 100%; border: 1px solid var(--line); border-radius: 7px; overflow: hidden; background: var(--surface); text-decoration: none; transition: transform .25s cubic-bezier(.2,.7,.2,1), border-color .2s, box-shadow .25s; }
+.cl:hover { transform: translateY(-3px); border-color: var(--muted); box-shadow: 0 14px 30px rgb(0 0 0 / .12); }
+.cl-media { margin: 0; aspect-ratio: 2.4 / 1; overflow: hidden; position: relative; max-width: 100%; }
+.cl-media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 40%, rgb(6 8 4 / .45)); }
+.cl:hover .pic.in { transform: scale(1.05); }
+.cl-t { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 4px; flex: 1; }
+.cl-n { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.cl b { font-family: var(--display); font-stretch: 82%; font-size: 1.2rem; }
+.cl p { margin: 0; font-size: 13.5px; color: var(--muted); flex: 1; }
+.cl-s { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-top: 6px; }
+.cl-done { border-color: color-mix(in srgb, var(--accent) 45%, var(--line)); } .cl-done .cl-s { color: var(--accent); }
+@media (prefers-reduced-motion: no-preference) { .course li, .ls-sec, .flow li, .dg-b, .stg { animation: rise .5s calc(var(--i, 0) * 60ms) cubic-bezier(.2,.7,.2,1) both; } }
+/* lesson */
+.ls-kick { font-family: var(--mono); font-size: 11.5px; letter-spacing: .04em; color: var(--photo-accent); margin-bottom: 6px; text-shadow: 0 1px 8px rgb(0 0 0 / .6); }
+.lp { display: flex; gap: 6px; flex-wrap: wrap; }
+.lp-i { width: 34px; height: 34px; display: grid; place-items: center; border-radius: 50%; border: 1px solid var(--line); text-decoration: none; font-family: var(--mono); font-size: 12px; color: var(--muted); background: var(--surface); transition: transform .2s; }
+.lp-i:hover { transform: translateY(-2px); } .lp-done { background: var(--accent); color: var(--bg); border-color: var(--accent); } .lp-cur { outline: 2px solid var(--ink); outline-offset: 2px; }
+.ls { display: flex; flex-direction: column; gap: 34px; max-width: 780px; }
+.ls-sec h3 { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: clamp(1.45rem, 3vw, 1.9rem); margin: 0 0 10px; letter-spacing: -.005em; text-wrap: balance; }
+.ls-sec > p { font-size: 17px; line-height: 1.7; margin: 0 0 12px; max-width: 68ch; text-wrap: pretty; }
+.ls-list { margin: 4px 0 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 8px; }
+.ls-list li { font-size: 16.5px; line-height: 1.55; padding-left: 22px; position: relative; } .ls-list li::before { content: ""; position: absolute; left: 4px; top: .62em; width: 8px; height: 2px; background: var(--accent); }
+.ls-table th[scope=row] { color: var(--ink); text-transform: none; letter-spacing: 0; font-size: 13px; font-weight: 600; background: var(--surface); position: static; }
+.ls-table td { font-size: 14px; }
+.dg-branches { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-top: 6px; }
+.dg-b { border: 1px solid var(--line); border-top: 3px solid var(--accent); border-radius: 6px; padding: 14px; background: var(--surface); }
+.dg-k { font-family: var(--mono); font-size: 10.5px; color: var(--faint); letter-spacing: .05em; text-transform: uppercase; }
+.dg-t { font-family: var(--display); font-stretch: 80%; font-weight: 800; font-size: 1.35rem; margin-top: 4px; } .dg-s { font-size: 12.5px; color: var(--muted); }
+.dg-b p { font-size: 14px; margin: 8px 0 0; }
+@media (max-width: 680px) { .dg-branches { grid-template-columns: 1fr; } }
+.flow { list-style: none; margin: 8px 0 0; padding: 0; display: flex; flex-direction: column; position: relative; }
+.flow::before { content: ""; position: absolute; left: 17px; top: 10px; bottom: 10px; width: 2px; background: linear-gradient(var(--accent), var(--line)); }
+.flow li { display: grid; grid-template-columns: 36px minmax(0, 1fr); gap: 14px; padding: 8px 0; position: relative; }
+.flow-n { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--bg); border: 2px solid var(--accent); font-family: var(--display); font-weight: 800; color: var(--accent); z-index: 1; }
+.flow b { font-family: var(--display); font-stretch: 85%; font-size: 1.08rem; } .flow p { margin: 2px 0 0; color: var(--muted); font-size: 14.5px; }
+.ag { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 10px; }
+.ag-i { border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; background: var(--surface); }
+.ag-h { display: flex; justify-content: space-between; gap: 10px; align-items: baseline; flex-wrap: wrap; } .ag-h b { font-family: var(--display); font-stretch: 82%; font-size: 1.2rem; } .ag-h span { font-family: var(--mono); font-size: 10.5px; color: var(--faint); text-align: right; }
+.ag-i p { margin: 6px 0 0; font-size: 14px; color: var(--muted); }
+.sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 8px; }
+.sides > div { border: 1px dashed var(--line); border-radius: 6px; padding: 12px; } .sides p { margin: 8px 0 0; font-size: 14.5px; color: var(--muted); }
+@media (max-width: 620px) { .sides { grid-template-columns: 1fr; } }
+.live { border: 1px solid color-mix(in srgb, var(--accent) 35%, var(--line)); border-radius: 8px; padding: 14px; background: color-mix(in srgb, var(--accent) 4%, var(--surface)); display: flex; flex-direction: column; gap: 10px; }
+.live-tag { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--accent); }
+.live-box { display: flex; flex-direction: column; gap: 10px; } .live-note { font-size: 13px; color: var(--muted); margin: 0; }
+.pbar-h { display: flex; justify-content: space-between; gap: 10px; font-size: 13px; color: var(--muted); } .pbar-h b { color: var(--ink); }
+.pbar-b { display: flex; height: 14px; border-radius: 3px; overflow: hidden; margin-top: 5px; background: var(--sunk); }
+.pbar-b i { display: block; height: 100%; } .pf-R { background: var(--p-r); } .pf-D { background: var(--p-d); } .pf-I { background: var(--faint); }
+@media (prefers-reduced-motion: no-preference) { .pbar-b i { transform-origin: 0 50%; animation: growx 1s cubic-bezier(.2,.7,.2,1) both; } }
+.pty { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 3px; font-family: var(--display); font-weight: 800; font-size: 11px; color: #fff; vertical-align: 1px; }
+.pty-R { background: var(--p-r); } .pty-D { background: var(--p-d); } .pty-I { background: var(--faint); }
+.pcs { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 10px; }
+.pc { display: grid; grid-template-columns: 52px minmax(0, 1fr); gap: 12px; align-items: center; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.pc-ph { width: 52px; height: 52px; border-radius: 50%; overflow: hidden; background: var(--sunk); display: grid; place-items: center; } .pc-ph .pic { object-position: 50% 20%; }
+.pc-init { font-family: var(--display); font-weight: 800; color: var(--muted); }
+.pc-t { display: flex; flex-direction: column; gap: 2px; min-width: 0; } .pc-t b { font-size: 14px; line-height: 1.25; } .pc-s { font-size: 12px; color: var(--muted); } .pc-x { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+.stages { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 110px), 1fr)); gap: 0; border: 1px solid var(--line); border-radius: 6px; overflow: hidden; }
+.stg { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-right: 1px solid var(--line); font-size: 12px; color: var(--muted); background: var(--surface); position: relative; }
+.stg:last-child { border-right: 0; } .stg-n { font-family: var(--display); font-stretch: 78%; font-weight: 800; font-size: 1.8rem; color: var(--ink); line-height: 1; }
+.vg { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 8px; }
+.vg-i { border: 1px solid var(--line); border-radius: 6px; padding: 10px 12px; background: var(--bg); } .vg-h { display: flex; justify-content: space-between; gap: 8px; align-items: center; } .vg-i p { margin: 6px 0 0; font-size: 13.5px; color: var(--muted); }
+.vd { display: flex; flex-direction: column; gap: 12px; }
+.vd-i { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 12px; align-items: start; } .vd-x { display: flex; flex-direction: column; gap: 4px; }
+.vd-k { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 1.05rem; } .vd-x p { margin: 0; font-size: 14px; color: var(--muted); } .vd-need b { color: var(--ink); }
+@media (max-width: 760px) { .vd-i { grid-template-columns: 1fr; } }
+.quiz { border: 1px solid var(--line); border-radius: 8px; background: var(--surface); padding: clamp(16px, 2.6vw, 24px); display: flex; flex-direction: column; gap: 12px; max-width: 780px; }
+.qz-h { display: flex; justify-content: space-between; align-items: center; } .qz-c { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.qz-q { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 1.3rem; margin: 0; }
+.qz-os { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 260px), 1fr)); gap: 8px; }
+.qz-o { appearance: none; text-align: left; font: inherit; font-size: 15px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 6px; padding: 12px 14px; cursor: pointer; transition: border-color .15s, transform .15s, background .2s; }
+.qz-o:hover:not(:disabled) { border-color: var(--muted); transform: translateY(-1px); }
+.qz-o.ok { border-color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, var(--bg)); } .qz-o.no { border-color: var(--crit); background: var(--crit-soft); } .qz-o.dim { opacity: .55; } .qz-o:disabled { cursor: default; }
+.qz-why { font-size: 14.5px; padding: 10px 12px; border-radius: 6px; background: var(--sunk); } .qz-why.ok b { color: var(--ok); } .qz-why.no b { color: var(--crit); }
+.quiz .morebtn { align-self: flex-start; }
+.qz-done { display: flex; flex-wrap: wrap; align-items: center; gap: 16px; } .qz-score { font-family: var(--display); font-stretch: 78%; font-weight: 800; font-size: 3rem; color: var(--accent); line-height: 1; } .qz-done p { margin: 0; flex: 1; min-width: 200px; }
+.ls-nav { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; max-width: 780px; }
+.ls-nav a { display: flex; flex-direction: column; gap: 2px; padding: 12px 14px; border: 1px solid var(--line); border-radius: 6px; text-decoration: none; background: var(--surface); transition: border-color .2s; } .ls-nav a:hover { border-color: var(--accent); }
+.ls-nav span { font-family: var(--mono); font-size: 11px; color: var(--faint); } .ls-next { text-align: right; }
+/* glossary + tips */
+.term { appearance: none; background: none; border: 0; padding: 0; font: inherit; color: inherit; text-decoration: underline dotted color-mix(in srgb, var(--accent) 80%, transparent); text-underline-offset: 3px; cursor: help; }
+.term:hover { color: var(--accent); }
+.gtip { position: absolute; z-index: 60; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; box-shadow: 0 14px 34px rgb(0 0 0 / .22); padding: 12px 14px; font-size: 13.5px; }
+@media (prefers-reduced-motion: no-preference) { .gtip { animation: rise .2s cubic-bezier(.2,.7,.2,1); } }
+.gtip b { font-family: var(--display); font-stretch: 85%; font-size: 1.05rem; } .gtip p { margin: 4px 0 8px; color: var(--muted); } .gtip a { font-size: 12px; color: var(--accent); }
+.gl { margin: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 340px), 1fr)); gap: 0 28px; }
+.gl-l { grid-column: 1 / -1; font-family: var(--display); font-weight: 800; font-size: 1.6rem; color: var(--accent); padding: 14px 0 2px; border-bottom: 1px solid var(--line); }
+.gl-i { padding: 10px 0; border-bottom: 1px solid var(--line); } .gl dt { font-weight: 700; } .gl dd { margin: 3px 0 0; color: var(--muted); font-size: 14px; }
+/* who */
+.mems { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 10px; }
+.mem { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
+.mem-ph { margin: 0; width: 84px; aspect-ratio: 225 / 275; border-radius: 4px; overflow: hidden; background: var(--sunk); max-width: 100%; }
+.mem-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; } .mem-k { display: flex; gap: 6px; align-items: center; font-size: 11.5px; color: var(--muted); }
+.mem-n { font-size: 15px; } .mem-lead { font-size: 12px; color: var(--accent); font-weight: 600; } .mem-s { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+.mem-c { margin: 4px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; } .mem-c em { font-style: normal; color: var(--ink); }
+.mem-a { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12px; margin-top: auto; padding-top: 4px; } .mem-a a { color: var(--accent); } .mem-ph-n { font-family: var(--mono); color: var(--muted); user-select: all; }
+.cms { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 420px), 1fr)); gap: 0 20px; }
+.cm { border-bottom: 1px solid var(--line); padding: 9px 0; } .cm summary { cursor: pointer; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; list-style: none; } .cm summary::-webkit-details-marker { display: none; }
+.cm summary b { font-size: 14px; } .cm-ch { font-size: 12px; color: var(--muted); } .cm p { margin: 6px 0 0; font-size: 13px; color: var(--muted); } .cm-r { color: var(--ink) !important; } .cm-a { font-size: 12px; color: var(--accent); }
 @media (max-width: 760px) { .hide-sm { display: none; } td.sum { min-width: 0; } }
 
 .empty, .loading, .failed { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; padding: 28px 12px; color: var(--faint); font-family: var(--mono); font-size: 12px; text-align: center; }
@@ -368,6 +484,8 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: s
 
 <div class="rail"><div class="wrap"><nav aria-label="Sections">
   <a href="#brief" data-view="brief">Brief</a>
+  <a href="#learn" data-view="learn" class="rail-learn">Learn</a>
+  <a href="#who" data-view="who">Who’s who</a>
   <a href="#president" data-view="president">President<span class="n" id="n-president"></span></a>
   <a href="#congress" data-view="congress">Congress<span class="n" id="n-congress"></span></a>
   <a href="#intel" data-view="intel">FBI &amp; Intel<span class="n" id="n-intel"></span></a>
@@ -388,11 +506,13 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: s
   <span>Built by Zero</span>
 </div></footer>
 
+<script src="/learn.js"></script>
 <script>
 (() => {
 'use strict';
 /* ---------------- data ---------------- */
 const SETS = ['kev', 'cves', 'ransomware', 'news', 'politics', 'votes', 'sports'];
+const LAZY = ['who'];
 const D = {};            // loaded payloads
 const ERR = {};          // load failures
 let SNAPSHOT = false;
@@ -781,6 +901,9 @@ const ART = {
   ransomware: 'M38 36V26a22 22 0 0 1 44 0v10M30 36H90V74H30zM60 50m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M60 55V64',
   cves: 'M60 8L104 72H16zM60 30V50M60 58V62M36 72L60 34 84 72',
   news: 'M16 14H86V70H16zM24 24H58M24 32H78M24 40H78M24 48H78M24 56H62M86 26c8 4 8 24 0 28M94 18c14 8 14 40 0 48',
+  learn: 'M20 16H58c4 0 2 4 2 4V70c0-4-4-6-8-6H20zM100 16H62c-4 0-2 4-2 4V70c0-4 4-6 8-6H100zM28 28H50M28 36H50M28 44H46M70 28H92M70 36H92M70 44H88',
+  who: 'M40 30m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0M80 30m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0M22 66c0-12 8-20 18-20s18 8 18 20M62 66c0-12 8-20 18-20s18 8 18 20M60 22m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0',
+  glossary: 'M28 10H92V74H28zM40 26H80M40 36H80M40 46H70M40 56H64',
   sources: 'M24 20m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M96 18m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M60 40m-8 0a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M28 66m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M94 64m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M29 23L53 36M91 21L67 36M33 63L53 45M89 61L67 45',
 };
 const HEADS = {
@@ -795,6 +918,9 @@ const HEADS = {
   ransomware: ['Ransomware', 'Who the gangs claim to have hit, from their own leak sites.'],
   cves: ['Critical CVEs', 'Every 9.0+ vulnerability published in the last 30 days.'],
   news: ['Security news', 'The security press, tagged and searchable.'],
+  learn: ['Learn', 'How the government works, who does what, and what it all means.'],
+  who: ['Who’s who', 'Everyone who holds federal office right now, from official sources.'],
+  glossary: ['Glossary', 'Plain words for the terms on this site.'],
   sources: ['Sources & method', 'Where every item comes from, how it is graded, and what is left out.'],
 };
 function sectionHead(key) {
@@ -868,7 +994,7 @@ function ticker() {
 }
 
 /* ---------------- images ---------------- */
-const HERO = {"brief": {"src": "/assets/heroes/brief.webp", "m": "/assets/heroes/brief-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Our treasured monuments at night, Washington D.C.", "url": "https://www.loc.gov/item/2011630850/"}, "president": {"src": "/assets/heroes/president.webp", "m": "/assets/heroes/president-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Dusk view of White House, Washington, D.C.", "url": "https://www.loc.gov/item/2011632156/"}, "congress": {"src": "/assets/heroes/congress.webp", "m": "/assets/heroes/congress-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Aerial view, United States Capitol building, Washington, D.C.", "url": "https://www.loc.gov/item/2010630477/"}, "courts": {"src": "/assets/heroes/courts.webp", "m": "/assets/heroes/courts-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "U.S. Supreme Court Building, Washington, D.C.", "url": "https://www.loc.gov/item/2011636057/"}, "intel": {"src": "/assets/heroes/intel.webp", "m": "/assets/heroes/intel-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "The Robert F. Kennedy Department of Justice Building, sometimes called Main Justice, is the headquarters of the United States Department of Justice", "url": "https://www.loc.gov/item/2025716652/"}, "world": {"src": "/assets/heroes/world.webp", "m": "/assets/heroes/world-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e017673"}, "sports": {"src": "/assets/heroes/sports.webp", "m": "/assets/heroes/sports-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Dodger Stadium, Los Angeles, California", "url": "https://www.loc.gov/item/2013632440/"}, "exploited": {"src": "/assets/heroes/exploited.webp", "m": "/assets/heroes/exploited-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e013107"}, "ransomware": {"src": "/assets/heroes/ransomware.webp", "m": "/assets/heroes/ransomware-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e008005"}, "cves": {"src": "/assets/heroes/cves.webp", "m": "/assets/heroes/cves-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e017357"}, "news": {"src": "/assets/heroes/news.webp", "m": "/assets/heroes/news-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss040e091208"}, "sources": {"src": "/assets/heroes/sources.webp", "m": "/assets/heroes/sources-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "[Main Reading Room. Interior of dome. Library of Congress Thomas Jefferson Building, Washington, D.C.]", "url": "https://www.loc.gov/item/2007684367/"}};
+const HERO = {"brief": {"src": "/assets/heroes/brief.webp", "m": "/assets/heroes/brief-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Our treasured monuments at night, Washington D.C.", "url": "https://www.loc.gov/item/2011630850/"}, "president": {"src": "/assets/heroes/president.webp", "m": "/assets/heroes/president-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Dusk view of White House, Washington, D.C.", "url": "https://www.loc.gov/item/2011632156/"}, "congress": {"src": "/assets/heroes/congress.webp", "m": "/assets/heroes/congress-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Aerial view, United States Capitol building, Washington, D.C.", "url": "https://www.loc.gov/item/2010630477/"}, "courts": {"src": "/assets/heroes/courts.webp", "m": "/assets/heroes/courts-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "U.S. Supreme Court Building, Washington, D.C.", "url": "https://www.loc.gov/item/2011636057/"}, "intel": {"src": "/assets/heroes/intel.webp", "m": "/assets/heroes/intel-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "The Robert F. Kennedy Department of Justice Building, sometimes called Main Justice, is the headquarters of the United States Department of Justice", "url": "https://www.loc.gov/item/2025716652/"}, "world": {"src": "/assets/heroes/world.webp", "m": "/assets/heroes/world-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e017673"}, "sports": {"src": "/assets/heroes/sports.webp", "m": "/assets/heroes/sports-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Dodger Stadium, Los Angeles, California", "url": "https://www.loc.gov/item/2013632440/"}, "exploited": {"src": "/assets/heroes/exploited.webp", "m": "/assets/heroes/exploited-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e013107"}, "ransomware": {"src": "/assets/heroes/ransomware.webp", "m": "/assets/heroes/ransomware-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e008005"}, "cves": {"src": "/assets/heroes/cves.webp", "m": "/assets/heroes/cves-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e017357"}, "news": {"src": "/assets/heroes/news.webp", "m": "/assets/heroes/news-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss040e091208"}, "sources": {"src": "/assets/heroes/sources.webp", "m": "/assets/heroes/sources-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "[Main Reading Room. Interior of dome. Library of Congress Thomas Jefferson Building, Washington, D.C.]", "url": "https://www.loc.gov/item/2007684367/"}, "learn": {"src": "/assets/heroes/learn.webp", "m": "/assets/heroes/learn-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Reading Room, Library of Congress, Washington, D.C.", "url": "https://www.loc.gov/item/2011633411/"}, "who": {"src": "/assets/heroes/who.webp", "m": "/assets/heroes/who-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "The White House, Washington, D.C.", "url": "https://www.loc.gov/item/2011632870/"}};
 function pic(src, alt, cls, o = {}) {
   if (!src || !/^(https:\/\/|\/assets\/)/.test(src)) return null;
   const i = h('img', {src, alt: alt || '', class: 'pic ' + (cls || ''), loading: o.eager ? 'eager' : 'lazy', decoding: 'async', referrerpolicy: 'no-referrer', srcset: o.srcset || null, sizes: o.sizes || null, fetchpriority: o.eager ? 'high' : null});
@@ -935,6 +1061,212 @@ addEventListener('scroll', () => {
   heroImg.style.translate = `0 ${y * 0.18}px`;
 }, {passive: true});
 
+/* ---------------- learn ---------------- */
+const L = window.LEARN || {lessons: [], votes: [], glossary: []};
+const LP = (() => { try { return JSON.parse(localStorage.getItem('ps-learn') || '{}'); } catch (e) { return {}; } })();
+const saveLP = () => { try { localStorage.setItem('ps-learn', JSON.stringify(LP)); } catch (e) {} };
+const lessonById = (id) => L.lessons.find((x) => x.id === id);
+const ensure = (name) => { if (!D[name] && !ERR[name] && !ensure.p[name]) { ensure.p[name] = 1; loadSet(name); } };
+ensure.p = {};
+const PARTY = (p) => (/^Rep/.test(p) ? 'R' : /^Dem/.test(p) ? 'D' : 'I');
+const partyChip = (p) => h('span', {class: 'pty pty-' + PARTY(p), title: p, text: PARTY(p)});
+const where = (m) => m.chamber === 'House' ? `${m.state}${m.district === 0 ? '-AL' : '-' + m.district}` : m.state;
+
+/* glossary terms, tappable anywhere they are wired in */
+const GLOSS = L.glossary.map(([t, d]) => ({t, d, re: new RegExp('\\b' + t.replace(/\s*\(.*\)$/, '').replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/ \/ .*/, '') + '\\b', 'i')}))
+  .sort((a, b) => b.t.length - a.t.length);
+let tipEl = null;
+function closeTip() { tipEl?.remove(); tipEl = null; }
+document.addEventListener('click', (e) => { if (tipEl && !e.target.closest('.term, .gtip')) closeTip(); });
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeTip(); });
+function showTip(btn, g) {
+  closeTip();
+  tipEl = h('div', {class: 'gtip', role: 'dialog', 'aria-label': g.t}, h('b', {text: g.t}), h('p', {text: g.d}), h('a', {href: '#glossary', text: 'Full glossary →', onclick: closeTip}));
+  document.body.append(tipEl);
+  const r = btn.getBoundingClientRect(), w = Math.min(300, innerWidth - 24);
+  tipEl.style.width = w + 'px';
+  tipEl.style.left = Math.max(12, Math.min(innerWidth - w - 12, r.left + r.width / 2 - w / 2)) + scrollX + 'px';
+  tipEl.style.top = r.bottom + 8 + scrollY + 'px';
+}
+function explain(text) {
+  const out = []; let rest = String(text || ''); const used = new Set();
+  while (rest) {
+    let best = null;
+    for (const g of GLOSS) { if (used.has(g.t)) continue; const m = rest.match(g.re); if (m && (!best || m.index < best.m.index)) best = {g, m}; }
+    if (!best) { out.push(rest); break; }
+    used.add(best.g.t);
+    out.push(rest.slice(0, best.m.index));
+    const g = best.g;
+    out.push(h('button', {type: 'button', class: 'term', text: best.m[0], onclick: (e) => { e.stopPropagation(); showTip(e.currentTarget, g); }}));
+    rest = rest.slice(best.m.index + best.m[0].length);
+  }
+  return out;
+}
+
+/* vote decoding */
+function decodeVote(v) {
+  const g = L.votes.find((x) => x.re.test(v.question)) || {name: 'Recorded vote', plain: 'A recorded vote on this question.', need: 'majority'};
+  const amend = /constitution/i.test(v.title) && /joint resolution|j res/i.test(v.measure + ' ' + v.title);
+  const need = amend ? '2/3' : g.need;
+  const cast = (v.yea || 0) + (v.nay || 0);
+  const req = need === '2/3' ? Math.ceil(cast * 2 / 3) : need === '3/5' ? 60 : need === 'majority' ? Math.floor(cast / 2) + 1 : 0;
+  const label = need === '2/3' ? 'two-thirds of those voting' : need === '3/5' ? 'three-fifths of the Senate' : need === 'majority' ? 'a majority of those voting' : 'no threshold';
+  const split = (v.parties || []).filter((p) => p.yea + p.nay > 0).map((p) => `${p.party} ${p.yea}–${p.nay}`).join(', ');
+  const lines = (v.parties || []).filter((p) => p.yea + p.nay > 3);
+  const partyLine = lines.length >= 2 && lines.every((p) => p.yea / (p.yea + p.nay) > 0.9 || p.nay / (p.yea + p.nay) > 0.9) && new Set(lines.map((p) => p.yea > p.nay)).size > 1;
+  return {...g, need, req, label, split, partyLine, amend, met: req ? v.yea >= req : null};
+}
+
+/* diagrams */
+const DIAG = {
+  branches: () => h('div', {class: 'dg-branches'}, [
+    ['Legislative', 'Congress', 'House + Senate', 'Writes laws, sets taxes and spending, declares war, confirms nominees (Senate), impeaches (House).'],
+    ['Executive', 'The President', 'Vice President, Cabinet, agencies', 'Carries out and enforces laws, commands the military, conducts foreign policy, signs or vetoes bills.'],
+    ['Judicial', 'The courts', 'Supreme Court + federal courts', 'Decides cases, interprets laws, and can strike down laws or actions that break the Constitution.'],
+  ].map(([k, t, s2, d], i) => h('div', {class: 'dg-b', style: `--i:${i}`}, h('div', {class: 'dg-k', text: k + ' · Article ' + ['I', 'II', 'III'][i]}), h('div', {class: 'dg-t', text: t}), h('div', {class: 'dg-s', text: s2}), h('p', {text: d})))),
+  billpath: () => flow([['Introduced', 'A member files the bill and it gets a number like H.R. 1234.'], ['Committee', 'Hearings, markup and a committee vote. Most bills stop here.'], ['Floor vote', 'The full chamber debates and votes.'], ['Other chamber', 'The same steps in the other chamber.'], ['Agree on one text', 'Differences are settled by amendments or a conference committee.'], ['President', 'Signs it, vetoes it, or lets it sit.'], ['Law', 'It becomes a public law. A veto can be overridden by two-thirds of each chamber.']]),
+  rulemaking: () => flow([['Law passed', 'Congress gives an agency authority to act.'], ['Proposed rule', 'Published in the Federal Register.'], ['Public comment', 'Anyone can comment, usually for 30 to 60 days.'], ['Final rule', 'The agency responds to comments and publishes the final version.'], ['In effect', 'Congress can cancel it under the Congressional Review Act, and courts can review it.']]),
+  courts: () => flow([['District courts', '94 trial courts. Cases start here: evidence, witnesses, juries.'], ['Courts of appeals', '13 circuits. Panels of judges review whether the trial court got the law right.'], ['Supreme Court', '9 justices. Chooses which cases to hear and has the final word on federal law and the Constitution.']]),
+  justice: () => flow([['Investigation', 'The FBI or another agency gathers evidence.'], ['Complaint or arrest', 'An initial charge, often with an arrest.'], ['Indictment', 'A grand jury formally charges serious crimes.'], ['Arraignment', 'The defendant hears the charges and enters a plea.'], ['Plea or trial', 'Most federal cases end in a guilty plea; the rest go to trial.'], ['Verdict', 'Guilty or not guilty, beyond a reasonable doubt.'], ['Sentencing', 'The judge sets the punishment.'], ['Appeal', 'A higher court can review the conviction or sentence.']]),
+};
+function flow(steps) {
+  return h('ol', {class: 'flow'}, steps.map(([t, d], i) => h('li', {style: `--i:${i}`}, h('span', {class: 'flow-n', text: i + 1}), h('div', null, h('b', {text: t}), h('p', {text: d})))));
+}
+
+/* live blocks inside lessons */
+function personCard(p, sub, extra) {
+  const ph = p.photo ? h('span', {class: 'pc-ph'}, pic(p.photo, '', '')) : h('span', {class: 'pc-ph pc-init', text: (p.name || '?').split(' ').map((x) => x[0]).join('').slice(0, 2)});
+  return h('div', {class: 'pc'}, ph, h('div', {class: 'pc-t'}, h('b', {text: p.name}), h('span', {class: 'pc-s'}, sub), extra || null));
+}
+function partyBar(label, rows) {
+  const tot = rows.reduce((a, r) => a + r.n, 0) || 1;
+  return h('div', {class: 'pbar'}, h('div', {class: 'pbar-h'}, h('b', {text: label}), h('span', {text: rows.map((r) => `${r.n} ${r.p}`).join(' · ')})),
+    h('div', {class: 'pbar-b'}, rows.map((r) => h('i', {class: 'pf-' + PARTY(r.p), style: `width:${(r.n / tot) * 100}%`, title: `${r.p}: ${r.n}`}))));
+}
+const needWho = () => { ensure('who'); return D.who ? null : (ERR.who ? h('div', {class: 'failed', text: 'The officeholder list did not load.'}) : h('div', {class: 'loading', text: 'Loading officeholders'})); };
+const LIVE = {
+  counts: () => {
+    const w = needWho(); if (w) return w;
+    const c = (ch) => ['Republican', 'Democratic', 'Independent'].map((p) => ({p, n: D.who.rows.filter((m) => m.chamber === ch && m.party === p).length})).filter((r) => r.n);
+    return h('div', {class: 'live-box'}, partyBar('House', c('House')), partyBar('Senate', c('Senate')),
+      h('p', {class: 'live-note', text: `President: ${D.who.president?.name || '—'} (${D.who.president?.party || ''}). Vice President: ${D.who.vp?.name || '—'}. Supreme Court: ${D.who.justices.length} justices. The House count includes the 6 non-voting delegates.`}));
+  },
+  leaders: () => {
+    const w = needWho(); if (w) return w;
+    const order = ['Speaker of the House', 'House Majority Leader', 'House Minority Leader', 'House Majority Whip', 'House Minority Whip', 'Senate Majority Leader', 'Senate Minority Leader', 'Senate Majority Whip', 'Senate Minority Whip', 'President Pro Tempore of the Senate'];
+    const ls = order.map((t) => D.who.leaders.find((l) => l.title === t)).filter(Boolean);
+    return h('div', {class: 'pcs'}, ls.map((l) => personCard(l, [partyChip(l.party), ` ${l.title}`])));
+  },
+  billstages: () => {
+    const pl = politics(); if (!pl) return state('politics');
+    const STG = [['In committee', /referred to|introduced|read twice|sponsor introductory/i], ['Reported or on calendar', /reported|placed on|calendar|ordered to be reported|markup/i], ['Passed one chamber', /passed|agreed to in (house|senate)|received in the (house|senate)/i], ['At the President', /presented to president/i], ['Became law', /became public law|signed by president/i]];
+    const bills = pl.filter((r) => r.source === 'Congress.gov');
+    const stageOf = (r) => { for (let i = STG.length - 1; i >= 0; i--) if (STG[i][1].test(r.detail)) return i; return 0; };
+    const by = STG.map(() => []); bills.forEach((b) => by[stageOf(b)].push(b));
+    return h('div', {class: 'live-box'}, h('div', {class: 'stages'}, STG.map(([n], i) => h('div', {class: 'stg', style: `--i:${i}`}, h('span', {class: 'stg-n', text: N(by[i].length)}), h('span', {text: n})))),
+      h('p', {class: 'live-note', text: `The ${N(bills.length)} bills with the newest actions on Congress.gov, placed by their latest action. Tap one to read its summary and every action so far.`}),
+      h('div', {class: 'list'}, [4, 3, 2, 1].flatMap((i) => by[i].slice(0, 2)).concat(by[0].slice(0, 2)).slice(0, 8).map((r) => recordItem(r))));
+  },
+  voteguide: () => h('div', {class: 'vg'}, L.votes.filter((g) => g.need !== 'none').map((g) => h('div', {class: 'vg-i'}, h('div', {class: 'vg-h'}, h('b', {text: g.name}), h('span', {class: 'chip', text: g.need === 'majority' ? 'Majority' : g.need === '2/3' ? 'Two-thirds' : 'Three-fifths'})), h('p', {text: g.plain})))),
+  votesdecoded: () => {
+    const vt = D.votes?.rows; if (!vt) return state('votes');
+    return h('div', {class: 'vd'}, vt.slice(0, 6).map((v) => {
+      const d = decodeVote(v);
+      return h('div', {class: 'vd-i'}, voteCard(v), h('div', {class: 'vd-x'},
+        h('div', {class: 'vd-k', text: d.name}), h('p', {text: d.plain + (d.amend ? ' A proposed constitutional amendment always needs two-thirds.' : '')}),
+        d.req ? h('p', {class: 'vd-need'}, `Needed ${d.label}: `, h('b', {text: N(d.req)}), ` of ${N(v.yea + v.nay)}. Got `, h('b', {text: N(v.yea)}), `, so it ${d.met ? 'cleared the bar' : 'fell short'}.`) : null,
+        d.split ? h('p', {class: 'vd-split', text: `By party: ${d.split}.${d.partyLine ? ' A party-line vote.' : ''}`}) : null));
+    }));
+  },
+  cabinet: () => {
+    const w = needWho(); if (w) return w;
+    return h('div', {class: 'pcs'}, D.who.cabinet.map((c) => personCard(c, c.title)));
+  },
+  eos: () => { const pl = politics(); if (!pl) return state('politics'); return h('div', {class: 'list'}, pl.filter((r) => r.source === 'Federal Register' && r.branch === 'President').slice(0, 6).map((r) => recordItem(r))); },
+  rules: () => {
+    const pl = politics(); const vt = D.votes?.rows || [];
+    const cra = vt.filter((v) => /congressional disapproval/i.test(v.title)).slice(0, 3);
+    return h('div', {class: 'live-box'}, cra.length ? [h('p', {class: 'live-note', text: 'Congressional Review Act votes in the House:'}), h('div', {class: 'votes'}, cra.map(voteCard))] : null,
+      pl ? [h('p', {class: 'live-note', text: 'Newest significant rules:'}), h('div', {class: 'list'}, pl.filter((r) => /rule$/i.test(r.kind)).slice(0, 5).map((r) => recordItem(r)))] : state('politics'));
+  },
+  justices: () => {
+    const w = needWho(); if (w) return w;
+    return h('div', {class: 'pcs'}, D.who.justices.map((j) => personCard(j, j.title, j.nominatedBy ? h('span', {class: 'pc-x', text: `Nominated by ${j.nominatedBy} · on the Court since ${j.seated.slice(0, 4)}`}) : null)));
+  },
+  dojstages: () => {
+    const pl = politics(); if (!pl) return state('politics');
+    const doj = pl.filter((r) => r.source === 'Justice Department');
+    const S = [['Charged or indicted', /\b(charged|indicted|indictment|arrested|complaint|charges)\b/i], ['Pleaded guilty', /\bplead(s|ed)? guilty|pleaded guilty|admits\b/i], ['Convicted at trial', /\b(convicted|found guilty|jury)\b/i], ['Sentenced', /\bsentenc/i]];
+    const stage = (t) => { let k = -1; S.forEach(([, re], i) => { if (re.test(t)) k = i; }); return k; };
+    const by = S.map(() => []); doj.forEach((r) => { const k = stage(r.title); if (k >= 0) by[k].push(r); });
+    return h('div', {class: 'live-box'}, h('div', {class: 'stages'}, S.map(([n], i) => h('div', {class: 'stg', style: `--i:${i}`}, h('span', {class: 'stg-n', text: N(by[i].length)}), h('span', {text: n})))),
+      h('p', {class: 'live-note', text: `From the ${N(doj.length)} newest Justice Department releases, sorted by the stage named in the headline.`}),
+      h('div', {class: 'list'}, by.flatMap((b) => b.slice(0, 2)).map((r) => recordItem(r))));
+  },
+  cbo: () => { const pl = politics(); if (!pl) return state('politics'); return h('div', {class: 'list'}, pl.filter((r) => r.source === 'CBO').slice(0, 6).map((r) => recordItem(r))); },
+};
+
+/* lesson page */
+function lessonView(id) {
+  const ls = lessonById(id); if (!ls) return [h('div', {class: 'empty', text: 'Lesson not found'})];
+  const idx = L.lessons.indexOf(ls), next = L.lessons[idx + 1], prev = L.lessons[idx - 1];
+  const hp = HERO[ls.hero] || HERO.learn;
+  const art = sectionHead('learn'); // reuse structure, then swap content
+  art.classList.add('hero-lesson');
+  art.querySelector('.hero-frame').replaceChildren(heroPic(ls.hero, 'hero-img'));
+  heroImg = art.querySelector('.hero-img');
+  art.querySelector('.vhead-t').replaceChildren(h('div', {class: 'ls-kick', text: `Lesson ${ls.n} of ${L.lessons.length} · ${ls.minutes} min read`}), h('h2', {text: ls.title}), h('p', {text: ls.kicker}));
+  art.querySelector('.hero-credit').textContent = `${hp.title} · ${hp.credit}`; art.querySelector('.hero-credit').href = hp.url;
+  const body = h('article', {class: 'ls'}, ls.sections.map((sec, si) => h('section', {class: 'ls-sec', style: `--i:${si}`},
+    h('h3', {text: sec.h}),
+    ...(sec.p || []).map((t) => h('p', {text: t})),
+    sec.list ? h('ul', {class: 'ls-list'}, sec.list.map((t) => h('li', {text: t}))) : null,
+    sec.table ? h('div', {class: 'tbox tbox-flat'}, h('table', {class: 'ls-table'}, h('thead', null, h('tr', null, sec.table.cols.map((c) => h('th', {class: 'plain', text: c})))), h('tbody', null, sec.table.rows.map((r) => h('tr', null, r.map((c, i) => h(i ? 'td' : 'th', {class: i ? null : 'plain', scope: i ? null : 'row', text: c}))))))) : null,
+    sec.diagram ? DIAG[sec.diagram]() : null,
+    sec.agencies ? h('div', {class: 'ag'}, sec.agencies.map(([n, home, d]) => h('div', {class: 'ag-i'}, h('div', {class: 'ag-h'}, h('b', {text: n}), h('span', {text: home})), h('p', {text: d})))) : null,
+    sec.sides ? h('div', {class: 'sides'}, h('div', null, h('span', {class: 'chip', text: 'The case for'}), h('p', {text: sec.sides.for})), h('div', null, h('span', {class: 'chip', text: 'The case against'}), h('p', {text: sec.sides.against}))) : null,
+    sec.live ? h('div', {class: 'live'}, h('div', {class: 'live-tag'}, h('span', {class: 'dot on'}), 'Live from the record'), LIVE[sec.live]()) : null)));
+  const quiz = quizBlock(ls);
+  const nav = h('nav', {class: 'ls-nav'}, prev ? h('a', {class: 'ls-prev', href: '#learn-' + prev.id}, h('span', {text: '← Previous'}), h('b', {text: prev.title})) : h('a', {class: 'ls-prev', href: '#learn'}, h('span', {text: '←'}), h('b', {text: 'All lessons'})),
+    next ? h('a', {class: 'ls-next', href: '#learn-' + next.id}, h('span', {text: 'Next →'}), h('b', {text: next.title})) : h('a', {class: 'ls-next', href: '#who'}, h('span', {text: 'Next →'}), h('b', {text: 'Who’s who'})));
+  return [art, progressStrip(ls.id), body, quiz, nav];
+}
+function progressStrip(cur) {
+  return h('div', {class: 'lp'}, L.lessons.map((x) => h('a', {href: '#learn-' + x.id, class: 'lp-i' + (x.id === cur ? ' lp-cur' : '') + (LP[x.id] != null ? ' lp-done' : ''), title: `${x.n}. ${x.title}`, 'aria-label': `Lesson ${x.n}: ${x.title}${LP[x.id] != null ? ', completed' : ''}`}, h('span', {text: x.n}))));
+}
+function quizBlock(ls) {
+  const st = {i: 0, right: 0, picked: null};
+  const box = h('section', {class: 'quiz', 'aria-label': 'Check yourself'});
+  const draw = () => {
+    if (st.i >= ls.quiz.length) {
+      LP[ls.id] = Math.max(LP[ls.id] ?? 0, st.right); saveLP();
+      box.replaceChildren(h('div', {class: 'qz-h'}, h('span', {class: 'live-tag', text: 'Check yourself'})), h('div', {class: 'qz-done'}, h('div', {class: 'qz-score', text: `${st.right}/${ls.quiz.length}`}), h('p', {text: st.right === ls.quiz.length ? 'Every one right. Lesson complete.' : 'Lesson complete. Retake it anytime to lock in the ones you missed.'}), h('button', {class: 'morebtn', type: 'button', text: 'Retake', onclick: () => { st.i = 0; st.right = 0; st.picked = null; draw(); }})));
+      document.querySelectorAll('.lp-i').forEach((a) => { if (a.getAttribute('href') === '#learn-' + ls.id) a.classList.add('lp-done'); });
+      return;
+    }
+    const q = ls.quiz[st.i];
+    const opts = q.a.map((t, k) => h('button', {type: 'button', class: 'qz-o' + (st.picked != null ? (k === q.c ? ' ok' : k === st.picked ? ' no' : ' dim') : ''), disabled: st.picked != null, text: t, onclick: () => { st.picked = k; if (k === q.c) st.right++; draw(); }}));
+    box.replaceChildren(...[
+      h('div', {class: 'qz-h'}, h('span', {class: 'live-tag', text: 'Check yourself'}), h('span', {class: 'qz-c', text: `Question ${st.i + 1} of ${ls.quiz.length}`})),
+      h('p', {class: 'qz-q', text: q.q}), h('div', {class: 'qz-os'}, opts),
+      st.picked != null ? h('div', {class: 'qz-why ' + (st.picked === q.c ? 'ok' : 'no')}, h('b', {text: st.picked === q.c ? 'Right. ' : 'Not quite. '}), q.why) : null,
+      st.picked != null ? h('button', {class: 'morebtn', type: 'button', text: st.i + 1 < ls.quiz.length ? 'Next question' : 'See your score', onclick: () => { st.i++; st.picked = null; draw(); }}) : null].filter(Boolean));
+  };
+  draw();
+  return box;
+}
+function memberCard(m) {
+  return h('article', {class: 'mem'},
+    h('figure', {class: 'mem-ph'}, pic(m.photo, '', '')),
+    h('div', {class: 'mem-t'},
+      h('div', {class: 'mem-k'}, partyChip(m.party), h('span', {text: m.chamber === 'Senate' ? `Senator · ${m.state}${m.rank ? ' · ' + m.rank : ''}` : `Representative · ${where(m)}`})),
+      h('b', {class: 'mem-n', text: m.name}),
+      m.lead.length ? h('span', {class: 'mem-lead', text: m.lead.join(' · ')}) : null,
+      h('span', {class: 'mem-s', text: `In the ${m.chamber} since ${m.since} · term ends ${m.termEnd.slice(0, 4)}`}),
+      m.committees.length ? h('ul', {class: 'mem-c'}, m.committees.slice(0, 4).map((c) => h('li', null, c.title ? h('em', {text: c.title + ', '}) : null, c.name))) : null,
+      h('div', {class: 'mem-a'}, m.url ? A(m.url, 'Website ↗', '') : null, m.phone ? h('span', {class: 'mem-ph-n', text: m.phone}) : null)));
+}
+
 /* ---------------- views ---------------- */
 const VIEWS = {
   brief() {
@@ -956,7 +1288,9 @@ const VIEWS = {
     const laws = pl ? h('div', {class: 'list'}, pl.filter((r) => r.branch === 'Congress' && /Became law|Bill action/.test(r.kind)).slice(0, 7).map((r) => recordItem(r))) : state('politics');
     const law = pl ? h('div', {class: 'list'}, pl.filter((r) => r.branch === 'Intel & Law' && (r.source !== 'Justice Department' || /National Security|Federal Bureau of Investigation|Criminal Division/.test(r.orgs || '') || CYBER.test(r.title))).slice(0, 7).map((r) => recordItem(r))) : state('politics');
     const vts = D.votes ? (D.votes.rows.length ? h('div', {class: 'votes'}, D.votes.rows.slice(0, 4).map(voteCard)) : h('div', {class: 'empty', text: 'No recorded votes yet'})) : state('votes');
-    return [figs,
+    const done = L.lessons.filter((x) => LP[x.id] != null).length; const nextL = L.lessons.find((x) => LP[x.id] == null);
+    const course = h('a', {class: 'cb', href: nextL ? '#learn-' + nextL.id : '#learn'}, h('span', {class: 'cb-k', text: 'Learn'}), h('b', {text: nextL ? (done ? `Continue lesson ${nextL.n}: ${nextL.title}` : 'New to politics? Start the 10-lesson course') : 'Course complete. Review any lesson'}), h('span', {class: 'cb-p'}, L.lessons.map((x) => h('i', {class: LP[x.id] != null ? 'on' : ''}))), h('span', {class: 'cb-go', text: '→'}));
+    return [figs, course,
       h('div', {class: 'grid'},
         panel('Patch now', 'Newest flaws CISA confirms are exploited in the wild. Federal agencies must fix them by the due date.', patch, {more: ['#exploited', 'Full catalog →']}),
         panel('Cyber × government', 'Government actions that touch cyber, and security stories about states, elections or law enforcement.', ovl, {more: ['#intel', 'FBI & Intel →']})),
@@ -1191,6 +1525,78 @@ const VIEWS = {
     ];
   },
 
+  learn() {
+    const done = L.lessons.filter((x) => LP[x.id] != null).length;
+    const nextL = L.lessons.find((x) => LP[x.id] == null) || L.lessons[0];
+    return [
+      sectionHead('learn'),
+      h('section', {class: 'lh'},
+        h('div', {class: 'lh-t'}, h('h3', {text: done ? `${done} of ${L.lessons.length} lessons done` : 'Start here'}), h('p', {text: 'Ten short lessons on how the government actually works, each tied to what is happening on the record today, with a few questions at the end of each one. Your progress stays on this device.'}),
+          h('a', {class: 'lh-go', href: '#learn-' + nextL.id, text: done ? `Continue: ${nextL.title} →` : `Begin: ${nextL.title} →`})),
+        h('div', {class: 'lh-ring', style: `--p:${done / L.lessons.length}`}, h('b', {text: Math.round((done / L.lessons.length) * 100) + '%'}), h('span', {text: 'complete'}))),
+      h('ol', {class: 'course'}, L.lessons.map((x, i) => h('li', {style: `--i:${i}`}, h('a', {href: '#learn-' + x.id, class: 'cl' + (LP[x.id] != null ? ' cl-done' : '')},
+        h('figure', {class: 'cl-media'}, heroPic(x.hero, '')), h('div', {class: 'cl-t'},
+          h('span', {class: 'cl-n', text: `Lesson ${x.n} · ${x.minutes} min`}), h('b', {text: x.title}), h('p', {text: x.kicker}),
+          h('span', {class: 'cl-s', text: LP[x.id] != null ? `Done · quiz ${LP[x.id]}/${x.quiz.length}` : `${x.quiz.length} questions`})))))),
+      h('div', {class: 'grid'},
+        panel('Who’s who', 'Every current member of Congress, the Cabinet, congressional leaders and the Supreme Court, from official sources.', h('a', {class: 'lh-go', href: '#who', text: 'Open the directory →'})),
+        panel('Glossary', `${L.glossary.length} terms you will meet on this site, in plain words. Terms are also tappable in vote questions across the site.`, h('a', {class: 'lh-go', href: '#glossary', text: 'Open the glossary →'}))),
+    ];
+  },
+
+  who() {
+    const w = needWho(); if (w) return [sectionHead('who'), w];
+    const W = D.who;
+    const st = (TS.whof ||= {q: '', ch: '', p: '', s: '', n: 60});
+    const states = [...new Set(W.rows.map((m) => m.state))].sort();
+    const grid = h('div', {class: 'mems'}), countEl = h('span', {class: 'count'});
+    const more = h('button', {class: 'morebtn', type: 'button', hidden: true});
+    const fill = () => {
+      let l = W.rows.filter((m) => (!st.ch || m.chamber === st.ch) && (!st.p || PARTY(m.party) === st.p) && (!st.s || m.state === st.s));
+      if (st.q) { const q = st.q.toLowerCase(); l = l.filter((m) => (m.name + ' ' + m.state + ' ' + m.lead.join(' ') + ' ' + m.committees.map((c) => c.name).join(' ')).toLowerCase().includes(q)); }
+      l = l.slice().sort((a, b) => (b.lead.length ? 1 : 0) - (a.lead.length ? 1 : 0) || a.state.localeCompare(b.state) || (a.chamber === 'Senate' ? -1 : 1) - (b.chamber === 'Senate' ? -1 : 1) || (a.district ?? 0) - (b.district ?? 0));
+      grid.replaceChildren(...(l.length ? l.slice(0, st.n).map(memberCard) : [h('div', {class: 'empty', text: 'No one matches'})]));
+      countEl.textContent = N(l.length) + ' members';
+      more.hidden = l.length <= st.n; more.textContent = `Show ${N(Math.min(60, l.length - st.n))} more`;
+    };
+    more.addEventListener('click', () => { st.n += 60; fill(); });
+    const search = h('input', {class: 'search', type: 'search', id: 'q-who', placeholder: 'Search a name, state, committee or role', 'aria-label': 'Search members', value: st.q});
+    let t; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { st.q = search.value.trim(); st.n = 60; fill(); }, 120); });
+    const stSel = h('select', {class: 'sel', id: 'st-who', 'aria-label': 'State'}, h('option', {value: '', text: 'All states'}), states.map((s2) => h('option', {value: s2, text: s2})));
+    stSel.value = st.s; stSel.addEventListener('change', () => { st.s = stSel.value; st.n = 60; fill(); });
+    fill();
+    const order = ['Speaker of the House', 'House Majority Leader', 'House Minority Leader', 'House Majority Whip', 'House Minority Whip', 'Senate Majority Leader', 'Senate Minority Leader', 'Senate Majority Whip', 'Senate Minority Whip', 'President Pro Tempore of the Senate'];
+    const comms = W.committees.filter((c) => c.chamber !== 'joint');
+    return [
+      sectionHead('who'),
+      h('div', {class: 'grid'},
+        panel('The President and Vice President', `Term ends ${W.president ? DATE(W.president.end) : '—'}.`, h('div', {class: 'pcs'}, [W.president && personCard({name: W.president.name}, [partyChip(W.president.party), ' President of the United States']), W.vp && personCard({name: W.vp.name}, [partyChip(W.vp.party), ' Vice President · President of the Senate'])].filter(Boolean))),
+        panel('Party control', null, LIVE.counts())),
+      panel('The Cabinet', 'As listed by the White House.', h('div', {class: 'pcs'}, W.cabinet.map((c) => personCard(c, c.title))), {wide: true}),
+      panel('Congressional leadership', null, h('div', {class: 'pcs'}, order.map((tt) => W.leaders.find((l) => l.title === tt)).filter(Boolean).map((l) => personCard(l, [partyChip(l.party), ` ${l.title}`]))), {wide: true}),
+      panel('The Supreme Court', 'Sitting justices, in order of seniority, as listed by the Court.', LIVE.justices(), {wide: true}),
+      panel('Every member of Congress', 'Leaders first, then by state. Photos are official portraits.', [h('div', {class: 'tools'}, seg([['', 'Both chambers'], ['Senate', 'Senate'], ['House', 'House']], st.ch, (v) => { st.ch = v; st.n = 60; render(); }), seg([['', 'All'], ['R', 'Republican'], ['D', 'Democratic'], ['I', 'Independent']], st.p, (v) => { st.p = v; st.n = 60; render(); }), stSel, search, countEl), grid, more], {wide: true}),
+      panel('Committees', `${comms.length} full committees. Chairs come from the majority party; ranking members lead the minority side.`, h('div', {class: 'cms'}, comms.map((c) => h('details', {class: 'cm'}, h('summary', null, h('span', {class: 'chip', text: c.chamber === 'senate' ? 'Senate' : 'House'}), h('b', {text: c.name.replace(/^(House|Senate) Committee on (the )?/, '')}), h('span', {class: 'cm-ch', text: c.chair ? `Chair: ${c.chair}` : ''})),
+        c.ranking ? h('p', {class: 'cm-r', text: `Ranking member: ${c.ranking} · ${c.size} members`}) : null, c.jurisdiction ? h('p', {text: c.jurisdiction}) : null, c.url ? A(c.url, 'Committee website ↗', 'cm-a') : null))), {wide: true}),
+    ];
+  },
+
+  glossary() {
+    const st = (TS.glf ||= {q: ''});
+    const listEl = h('dl', {class: 'gl'}), countEl = h('span', {class: 'count'});
+    const fill = () => {
+      const q = st.q.toLowerCase();
+      const l = L.glossary.filter(([t, d]) => !q || (t + ' ' + d).toLowerCase().includes(q));
+      let last = '';
+      listEl.replaceChildren(...l.flatMap(([t, d]) => { const L0 = t[0].toUpperCase(); const head = L0 !== last ? (last = L0, h('div', {class: 'gl-l', text: L0})) : null; return [head, h('div', {class: 'gl-i'}, h('dt', {text: t}), h('dd', {text: d}))]; }).filter(Boolean));
+      countEl.textContent = N(l.length) + ' terms';
+    };
+    const search = h('input', {class: 'search', type: 'search', id: 'q-gl', placeholder: 'Search the glossary', 'aria-label': 'Search the glossary', value: st.q});
+    let t; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { st.q = search.value.trim(); fill(); }, 100); });
+    fill();
+    return [sectionHead('learn'), panel('Glossary', 'Plain-language definitions for the terms on this site.', [h('div', {class: 'tools'}, search, countEl), listEl], {wide: true})];
+  },
+
   sources() {
     const status = SETS.flatMap((s) => D[s]?.status || []);
     const genAt = SETS.map((s) => D[s]?.generated).filter(Boolean).sort().pop();
@@ -1269,26 +1675,28 @@ function voteCard(v) {
       ...(v.parties?.length ? [{t: 'h', x: 'By party'}, ...v.parties.map((p) => ({t: 'li', x: `${p.party}: ${N(p.yea)} yea, ${N(p.nay)} nay${p.present ? `, ${N(p.present)} present` : ''}${p.nv ? `, ${N(p.nv)} not voting` : ''}`}))] : []),
     ])),
     gradeBadge(grade(v, 'vote')),
-    h('div', {class: 'vote-q', text: v.question}),
+    h('div', {class: 'vote-q'}, explain(v.question)),
     h('div', {class: 'vbar', role: 'img', 'aria-label': `Yea ${v.yea}, Nay ${v.nay}`}, seg2(v.yea, 'y'), seg2(v.nay, 'n'), seg2(v.present, 'p'), seg2(v.nv, 'x')),
     h('div', {class: 'vote-n'}, h('span', null, h('b', {text: N(v.yea)}), ' yea'), h('span', null, h('b', {text: N(v.nay)}), ' nay'), v.present ? h('span', {text: `${N(v.present)} present`}) : null, v.nv ? h('span', {text: `${N(v.nv)} not voting`}) : null),
     v.parties?.length ? h('div', {class: 'vote-p'}, v.parties.map((p) => h('span', {text: `${p.party} ${N(p.yea)}–${N(p.nay)}`}))) : null);
 }
 /* ---------------- shell ---------------- */
 const ROUTES = Object.keys(VIEWS);
-let current = ROUTES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'brief';
+const validRoute = (v) => ROUTES.includes(v) || (v.startsWith('learn-') && !!lessonById(v.slice(6)));
+let current = validRoute(location.hash.slice(1)) ? location.hash.slice(1) : 'brief';
 function render() {
   const main = $('#main');
   const y = window.scrollY;
   const same = main.dataset.view === current;
-  const parts = VIEWS[current]();
+  if (current === 'who' || current.startsWith('learn')) ensure('who');
+  const parts = current.startsWith('learn-') ? lessonView(current.slice(6)) : VIEWS[current]();
   const lead = LEADS[current]?.();
   if (lead) { const fi = parts.findIndex((x) => x?.classList?.contains('figs')); parts.splice(fi >= 0 ? fi + 1 : (parts[0]?.classList?.contains('vhead') ? 1 : 0), 0, lead); }
   main.replaceChildren(h('div', {class: 'view'}, parts[0]?.classList?.contains('vhead') ? null : sectionHead(current), parts));
   if (!same) countUp(main);
   main.dataset.view = current;
   if (same) window.scrollTo(0, y);
-  document.querySelectorAll('.rail a').forEach((a) => { if (a.dataset.view === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  document.querySelectorAll('.rail a').forEach((a) => { if (a.dataset.view === current || (a.dataset.view === 'learn' && (current.startsWith('learn-') || current === 'glossary'))) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
   chrome();
 }
 function chrome() {
@@ -1322,7 +1730,7 @@ function chrome() {
   dot.classList.toggle('on', !SNAPSHOT && !failed);
   lt.textContent = SNAPSHOT ? `Preview snapshot · ${gen ? DATE(gen) + ', ' + gen.slice(11, 16) + ' UTC' : ''}` : failed ? `${failed} source group${failed > 1 ? 's' : ''} unavailable` : `Live · pulled ${gen ? AGO(gen) : 'now'}`;
 }
-window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (ROUTES.includes(v) && v !== current) { current = v; render(); window.scrollTo({top: 0}); } });
+window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (validRoute(v) && v !== current) { current = v; closeTip(); render(); window.scrollTo({top: 0}); } });
 
 /* clock + theme */
 const tick = () => { const d = new Date(); $('#clock').textContent = d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; };

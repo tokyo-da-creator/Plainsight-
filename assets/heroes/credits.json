@@ -94,5 +94,21 @@
   "title": "[Main Reading Room. Interior of dome. Library of Congress Thomas Jefferson Building, Washington, D.C.]",
   "url": "https://www.loc.gov/item/2007684367/",
   "rights": "No known restrictions on publication."
+ },
+ "learn": {
+  "src": "/assets/heroes/learn.webp",
+  "m": "/assets/heroes/learn-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "Reading Room, Library of Congress, Washington, D.C.",
+  "url": "https://www.loc.gov/item/2011633411/",
+  "rights": "No known restrictions on publication."
+ },
+ "who": {
+  "src": "/assets/heroes/who.webp",
+  "m": "/assets/heroes/who-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "The White House, Washington, D.C.",
+  "url": "https://www.loc.gov/item/2011632870/",
+  "rights": "No known restrictions on publication."
  }
 }
