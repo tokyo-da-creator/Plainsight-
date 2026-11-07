@@ -444,7 +444,9 @@ html.reading { overflow: hidden; }
 /* who */
 .mems { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 290px), 1fr)); gap: 10px; }
 .mem { display: grid; grid-template-columns: 84px minmax(0, 1fr); gap: 12px; padding: 10px; border: 1px solid var(--line); border-radius: 6px; background: var(--bg); }
-.mem-ph { margin: 0; width: 84px; aspect-ratio: 225 / 275; border-radius: 4px; overflow: hidden; background: var(--sunk); max-width: 100%; }
+.mem-ph::before { content: attr(data-i); position: absolute; inset: 0; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--muted); }
+.mem-ph > .pic { position: relative; }
+.mem-ph { position: relative; margin: 0; width: 84px; aspect-ratio: 225 / 275; border-radius: 4px; overflow: hidden; background: var(--sunk); max-width: 100%; }
 .mem-t { display: flex; flex-direction: column; gap: 3px; min-width: 0; } .mem-k { display: flex; gap: 6px; align-items: center; font-size: 11.5px; color: var(--muted); }
 .mem-n { font-size: 15px; } .mem-lead { font-size: 12px; color: var(--accent); font-weight: 600; } .mem-s { font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
 .mem-c { margin: 4px 0 0; padding: 0; list-style: none; font-size: 12px; color: var(--muted); display: flex; flex-direction: column; gap: 2px; } .mem-c em { font-style: normal; color: var(--ink); }
@@ -1000,7 +1002,8 @@ function pic(src, alt, cls, o = {}) {
   const i = h('img', {src, alt: alt || '', class: 'pic ' + (cls || ''), loading: o.eager ? 'eager' : 'lazy', decoding: 'async', referrerpolicy: 'no-referrer', srcset: o.srcset || null, sizes: o.sizes || null, fetchpriority: o.eager ? 'high' : null});
   const done = () => i.classList.add('in');
   i.addEventListener('load', done);
-  i.addEventListener('error', () => { const f = i.closest('.thumb, .tm-logo, .hs'); if (f) f.remove(); else { i.remove(); o.onfail?.(); } });
+  const alts = (o.fallback || []).filter(Boolean);
+  i.addEventListener('error', () => { if (alts.length) { i.src = alts.shift(); return; } const f = i.closest('.thumb, .tm-logo, .hs'); if (f) f.remove(); else { i.remove(); o.onfail?.(); } });
   if (i.complete && i.naturalWidth) done();
   return i;
 }
@@ -1152,8 +1155,11 @@ function flow(steps) {
 }
 
 /* live blocks inside lessons */
+const initials = (n) => (n || '?').replace(/,.*$/, '').split(' ').filter((x) => /^[A-Z]/.test(x) && !/^(Jr|Sr|II|III)\.?$/.test(x)).map((x) => x[0]).join('').slice(0, 2);
 function personCard(p, sub, extra) {
-  const ph = p.photo ? h('span', {class: 'pc-ph'}, pic(p.photo, '', '')) : h('span', {class: 'pc-ph pc-init', text: (p.name || '?').split(' ').map((x) => x[0]).join('').slice(0, 2)});
+  const ph = h('span', {class: 'pc-ph pc-init', text: initials(p.name)});
+  const im = pic(p.photo, p.name, '', {fallback: [p.photo2], onfail: () => { ph.textContent = initials(p.name); ph.classList.add('pc-init'); }});
+  if (im) { ph.classList.remove('pc-init'); ph.replaceChildren(im); }
   return h('div', {class: 'pc'}, ph, h('div', {class: 'pc-t'}, h('b', {text: p.name}), h('span', {class: 'pc-s'}, sub), extra || null));
 }
 function partyBar(label, rows) {
@@ -1275,7 +1281,7 @@ function quizBlock(ls) {
 }
 function memberCard(m) {
   return h('article', {class: 'mem'},
-    h('figure', {class: 'mem-ph'}, pic(m.photo, '', '')),
+    h('figure', {class: 'mem-ph', 'data-i': initials(m.name)}, pic(m.photo, m.name, '', {fallback: [m.photo2]})),
     h('div', {class: 'mem-t'},
       h('div', {class: 'mem-k'}, partyChip(m.party), h('span', {text: m.chamber === 'Senate' ? `Senator · ${m.state}${m.rank ? ' · ' + m.rank : ''}` : `Representative · ${where(m)}`})),
       h('b', {class: 'mem-n', text: m.name}),
@@ -1588,7 +1594,7 @@ const VIEWS = {
     return [
       sectionHead('who'),
       h('div', {class: 'grid'},
-        panel('The President and Vice President', `Term ends ${W.president ? DATE(W.president.end) : '—'}.`, h('div', {class: 'pcs'}, [W.president && personCard({name: W.president.name}, [partyChip(W.president.party), ' President of the United States']), W.vp && personCard({name: W.vp.name}, [partyChip(W.vp.party), ' Vice President · President of the Senate'])].filter(Boolean))),
+        panel('The President and Vice President', `Term ends ${W.president ? DATE(W.president.end) : '—'}.`, h('div', {class: 'pcs'}, [W.president && personCard({name: W.president.name, photo: W.president.photo}, [partyChip(W.president.party), ' President of the United States']), W.vp && personCard({name: W.vp.name, photo: W.vp.photo}, [partyChip(W.vp.party), ' Vice President · President of the Senate'])].filter(Boolean))),
         panel('Party control', null, LIVE.counts())),
       panel('The Cabinet', 'As listed by the White House.', h('div', {class: 'pcs'}, W.cabinet.map((c) => personCard(c, c.title))), {wide: true}),
       panel('Congressional leadership', null, h('div', {class: 'pcs'}, order.map((tt) => W.leaders.find((l) => l.title === tt)).filter(Boolean).map((l) => personCard(l, [partyChip(l.party), ` ${l.title}`]))), {wide: true}),
