@@ -268,7 +268,7 @@ html.reading { overflow: hidden; }
 /* photo heroes */
 :root { --on-photo: #f5f6ef; --on-photo-muted: rgb(245 246 239 / .78); --photo-accent: #b9ef5a; --scrim: rgb(6 8 4 / .86); }
 .hero { position: relative; display: block; isolation: isolate; border-radius: 8px; overflow: hidden; min-height: clamp(210px, 27vw, 360px); background: #0b0d09; color: var(--on-photo); padding: 0; }
-.hero-frame { position: absolute; inset: -8% 0 0 0; z-index: -2; }
+.hero-frame { position: absolute; inset: -16% 0 0 0; z-index: -2; will-change: translate; }
 .hero-img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: none; opacity: 1; }
 .hero-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(6 8 4 / .05) 0%, rgb(6 8 4 / .25) 40%, var(--scrim) 100%), linear-gradient(90deg, rgb(6 8 4 / .55), transparent 65%); }
 .hero-in { position: absolute; inset: auto 0 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: end; padding: clamp(18px, 3.4vw, 36px); }
@@ -1018,6 +1018,17 @@ function leadRow(items, key) {
   if (!items.length) return null;
   return h('section', {class: 'leads', 'aria-label': 'Lead stories'}, items.map((it, i) => leadCard(it, it._t || 'record', key, i === 0)));
 }
+/* stand-in photo for a story with no image: match the story, never repeat the section photo above it */
+const FB_BRANCH = {President: 'president', Agencies: 'who', Congress: 'congress', 'Intel & Law': 'intel', Courts: 'courts', World: 'world'};
+function fbKey(item, key) {
+  if (item.source === 'White House') {
+    const pool = ['president', 'who', 'brief'].filter((x) => x !== key);
+    return pool[[...(item.title || '')].reduce((a, c) => a + c.charCodeAt(0), 0) % pool.length];
+  }
+  let k = item.branch ? FB_BRANCH[item.branch] : item.league ? 'sports' : 'news';
+  if (!k || k === key) k = {president: 'who', congress: 'sources', courts: 'intel', world: 'news', news: 'world', sports: 'sports'}[key] || 'learn';
+  return k;
+}
 function leadCard(item, type, key, big) {
   const fig = h('figure', {class: 'lead-media'});
   const cap = h('figcaption', {class: 'lead-cap'});
@@ -1028,7 +1039,8 @@ function leadCard(item, type, key, big) {
       h('div', {class: 'lead-k'}, gradeBadge(grade(item, type)), h('span', {text: item.source}), h('span', {class: 'lead-when', text: item.date ? ((item.date.length === 10) ? SHORT(item.date) : AGO(item.date)) : ''})),
       h('h3', {text: item.title}),
       big && (item.summary || item.detail) ? h('p', {text: item.summary || item.detail}) : null));
-  const fallback = () => { fig.replaceChildren(heroPic(key, 'lead-img'), cap); cap.textContent = 'Photo: ' + (HERO[key] || HERO.brief).credit; card.classList.add('lead-fallback'); };
+  const fk = fbKey(item, key);
+  const fallback = () => { fig.replaceChildren(heroPic(fk, 'lead-img'), cap); cap.textContent = 'Photo: ' + (HERO[fk] || HERO.brief).credit; card.classList.add('lead-fallback'); };
   const set = (src, credit) => {
     if (!src) return fallback();
     const im = pic(src, '', 'lead-img', {onfail: fallback, eager: big});
@@ -1036,7 +1048,9 @@ function leadCard(item, type, key, big) {
     cap.textContent = 'Photo: ' + (credit || item.credit || item.source);
     fig.replaceChildren(im, cap);
   };
-  if (item.image) set(item.image, item.credit);
+  /* White House share images are mostly headline collages, not photos: use a real photo instead */
+  if (item.source === 'White House') fallback();
+  else if (item.image) set(item.image, item.credit);
   else { fallback(); ogFor(item.link).then((src) => { if (src) set(src, item.source); }); }
   return card;
 }
@@ -1057,8 +1071,12 @@ const LEADS = {
 let heroImg = null;
 addEventListener('scroll', () => {
   if (!heroImg || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-  const y = Math.min(scrollY, 900);
-  heroImg.style.translate = `0 ${y * 0.18}px`;
+  const box = heroImg.closest('.hero') || heroImg.closest('header');
+  if (!box) return;
+  const r = box.getBoundingClientRect();
+  /* only drift while the photo is on screen, and never more than the headroom above it */
+  const y = Math.max(0, Math.min(-r.top * 0.22, r.height * 0.13));
+  heroImg.style.translate = `0 ${y.toFixed(1)}px`;
 }, {passive: true});
 
 /* ---------------- learn ---------------- */
