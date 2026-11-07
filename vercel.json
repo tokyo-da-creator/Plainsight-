@@ -23,7 +23,7 @@
       "destination": "/api/og"
     },
     {
-      "source": "/api/:set(kev|cves|ransomware|news|politics|votes|sports)",
+      "source": "/api/:set(kev|cves|ransomware|news|politics|votes|sports|who)",
       "destination": "/api/intel?set=:set"
     }
   ],

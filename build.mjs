@@ -21,4 +21,5 @@ ${rest}
 mkdirSync(new URL("./public/", import.meta.url), { recursive: true });
 writeFileSync(new URL("./public/index.html", import.meta.url), doc);
 if (existsSync(new URL("./assets/", import.meta.url))) cpSync(new URL("./assets/", import.meta.url), new URL("./public/assets/", import.meta.url), { recursive: true });
+cpSync(new URL("./learn.js", import.meta.url), new URL("./public/learn.js", import.meta.url));
 console.log("public/index.html", doc.length, "bytes");
