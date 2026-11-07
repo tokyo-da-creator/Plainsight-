@@ -1,0 +1,21 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "buildCommand": "node build.mjs",
+  "outputDirectory": "public",
+  "functions": {
+    "api/intel.mjs": { "maxDuration": 60 },
+    "api/reader.mjs": { "maxDuration": 30 }
+  },
+  "rewrites": [
+    { "source": "/reader", "destination": "/api/reader" },
+    { "source": "/api/:set(kev|cves|ransomware|news|politics|votes|sports)", "destination": "/api/intel?set=:set" }
+  ],
+  "headers": [
+    { "source": "/(.*)", "headers": [
+      { "key": "X-Content-Type-Options", "value": "nosniff" },
+      { "key": "Referrer-Policy", "value": "strict-origin-when-cross-origin" },
+      { "key": "X-Frame-Options", "value": "DENY" },
+      { "key": "Permissions-Policy", "value": "camera=(), microphone=(), geolocation=()" }
+    ] }
+  ]
+}

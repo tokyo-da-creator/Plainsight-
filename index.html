@@ -1,0 +1,1185 @@
+<title>Plainsight</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Live public intelligence on cyberattacks, exploited vulnerabilities, ransomware, and the politics around them.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..800&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+/* Layout: an intelligence bulletin — classification strip, masthead, sticky section rail, then one view at a time. */
+:root {
+  --bg: #f4f5ef; --surface: #ffffff; --sunk: #eceee5; --ink: #14160f; --muted: #5b6052; --faint: #8a9080; --line: #dcdfd2;
+  --accent: #3f6a0b; --bar: #6aa212; --bar-soft: #c9df9f; --crit: #c8261b; --crit-soft: #f8dcd8; --warn: #a14a05; --ok: #2f7a2a;
+  --display: "Archivo", "Arial Narrow", system-ui, sans-serif;
+  --body: "IBM Plex Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --r: 6px; --gap: clamp(12px, 2vw, 20px);
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0d0f0a; --surface: #14170f; --sunk: #1a1e14; --ink: #ebeee2; --muted: #9ea392; --faint: #6f7566; --line: #262b1e;
+  --accent: #b5ec55; --bar: #a3e635; --bar-soft: #3a4a1c; --crit: #ff6a5c; --crit-soft: #3a1714; --warn: #f2a65a; --ok: #7fd36f; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0d0f0a; --surface: #14170f; --sunk: #1a1e14; --ink: #ebeee2; --muted: #9ea392; --faint: #6f7566; --line: #262b1e;
+  --accent: #b5ec55; --bar: #a3e635; --bar-soft: #3a4a1c; --crit: #ff6a5c; --crit-soft: #3a1714; --warn: #f2a65a; --ok: #7fd36f; color-scheme: dark; }
+
+body { background: var(--bg); color: var(--ink); font-family: var(--body); font-size: 15px; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--bg); }
+.wrap { max-width: 1320px; margin-inline: auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+a { color: inherit; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 3px; }
+
+/* classification strip */
+.strip { border-bottom: 1px solid var(--line); font-family: var(--mono); font-size: 11.5px; color: var(--muted); }
+.strip .wrap { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 16px; padding-block: 7px; }
+.tlp { color: var(--ink); background: var(--sunk); border: 1px solid var(--line); padding: 1px 7px; border-radius: 3px; letter-spacing: .06em; font-weight: 500; }
+.live { display: inline-flex; align-items: center; gap: 7px; }
+.dot { width: 7px; height: 7px; border-radius: 50%; background: var(--faint); flex: none; }
+.dot.on { background: var(--ok); }
+@media (prefers-reduced-motion: no-preference) { .dot.on { animation: blink 2.4s ease-in-out infinite; } }
+@keyframes blink { 50% { opacity: .35; } }
+.strip .spacer { flex: 1; }
+.theme { appearance: none; background: none; border: 1px solid var(--line); color: var(--muted); font: inherit; padding: 2px 8px; border-radius: 3px; cursor: pointer; }
+.theme:hover { color: var(--ink); }
+
+/* masthead */
+.mast { padding-block: clamp(22px, 4vw, 40px) clamp(14px, 2vw, 22px); display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px 32px; align-items: end; }
+.brand { font-family: var(--display); font-stretch: 72%; font-weight: 800; font-size: clamp(2.6rem, 8vw, 5.4rem); line-height: .86; letter-spacing: -.015em; margin: 0; text-transform: uppercase; text-wrap: balance; }
+.brand em { font-style: normal; color: var(--accent); }
+.lede { grid-column: 1 / -1; font-size: clamp(1.02rem, 1.6vw, 1.2rem); line-height: 1.5; max-width: 64ch; margin: 6px 0 0; color: var(--muted); text-wrap: pretty; }
+.lede b { color: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.lede .up { color: var(--crit); } .lede .down { color: var(--ok); }
+.asof { font-family: var(--mono); font-size: 11.5px; color: var(--faint); text-align: right; line-height: 1.6; }
+
+/* section rail */
+.rail { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--bg); border-block: 1px solid var(--line); }
+.rail nav { display: flex; gap: 2px; overflow-x: auto; scrollbar-width: none; }
+.rail nav::-webkit-scrollbar { display: none; }
+.rail a { text-decoration: none; font-family: var(--display); font-stretch: 85%; font-weight: 600; font-size: 13px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding: 12px 12px 10px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.rail a:hover { color: var(--ink); }
+.rail a[aria-current="page"] { color: var(--ink); border-bottom-color: var(--accent); }
+.rail .n { font-family: var(--mono); font-weight: 400; letter-spacing: 0; color: var(--faint); margin-left: 5px; font-size: 11px; }
+
+main { padding-block: clamp(18px, 3vw, 32px) 64px; }
+.view { display: flex; flex-direction: column; gap: var(--gap); }
+@media (prefers-reduced-motion: no-preference) { .view { animation: rise .35s cubic-bezier(.2,.7,.2,1); } @keyframes rise { from { opacity: .3; transform: translateY(4px); } } }
+
+/* figures */
+.figs { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 210px), 1fr)); border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); overflow: hidden; }
+.fig { padding: 16px 18px 15px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); margin: 0 -1px -1px 0; display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.fig-k { font-family: var(--display); font-stretch: 85%; font-size: 12px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.fig-v { font-family: var(--display); font-stretch: 78%; font-weight: 700; font-size: clamp(2.2rem, 4vw, 2.9rem); line-height: 1; font-variant-numeric: tabular-nums; letter-spacing: -.01em; }
+.fig-v.crit { color: var(--crit); }
+.fig-s { font-size: 12.5px; color: var(--muted); }
+.delta { font-family: var(--mono); font-size: 12px; padding: 0 5px; border-radius: 3px; }
+.delta.up { color: var(--crit); background: var(--crit-soft); } .delta.down { color: var(--ok); background: color-mix(in srgb, var(--ok) 14%, transparent); }
+
+/* panels */
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: var(--gap); }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); padding: clamp(14px, 2vw, 20px); min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.panel.wide { grid-column: 1 / -1; }
+.ph { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 4px 12px; }
+.ph h2 { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 1.12rem; letter-spacing: .01em; margin: 0; text-wrap: balance; }
+.ph .more { font-size: 12.5px; color: var(--accent); text-decoration: none; font-weight: 500; }
+.ph .more:hover { text-decoration: underline; }
+.note { font-size: 13px; color: var(--muted); margin: -4px 0 0; max-width: 72ch; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.sw { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+
+/* charts */
+.chart { position: relative; min-height: 200px; }
+.chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { fill: var(--faint); font-family: var(--mono); font-size: 10.5px; }
+.chart .grid-l { stroke: var(--line); }
+.tip { position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--line); border-radius: 4px; box-shadow: 0 6px 20px rgb(0 0 0 / .12); padding: 6px 9px; font-size: 12px; white-space: nowrap; z-index: 3; }
+.tip .k { color: var(--muted); font-size: 11.5px; }
+.tip b { font-variant-numeric: tabular-nums; }
+.rank { display: flex; flex-direction: column; gap: 7px; }
+.rk { display: grid; grid-template-columns: minmax(0, 9.5rem) minmax(0, 1fr) 3.2ch; gap: 10px; align-items: center; font-size: 13px; }
+.rk-n { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rk-t { height: 8px; background: var(--sunk); border-radius: 2px; overflow: hidden; }
+.rk-f { display: block; height: 100%; background: var(--bar); border-radius: 2px; }
+.rk:first-child .rk-f { background: var(--crit); }
+.rk-v { font-family: var(--mono); font-size: 12px; text-align: right; }
+
+/* lists */
+.list { display: flex; flex-direction: column; }
+.it { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 2px 14px; padding: 10px 0; border-top: 1px solid var(--line); }
+.it:first-child { border-top: 0; padding-top: 2px; }
+.it-t { font-weight: 500; line-height: 1.38; text-decoration: none; text-wrap: pretty; }
+.it-t:hover { text-decoration: underline; text-underline-offset: 2px; }
+.it-m { grid-column: 1; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12.5px; color: var(--muted); }
+.it-r { grid-row: 1 / span 2; grid-column: 2; font-family: var(--mono); font-size: 11.5px; color: var(--faint); white-space: nowrap; text-align: right; }
+.chip { display: inline-block; font-family: var(--mono); font-size: 10.5px; letter-spacing: .02em; border: 1px solid var(--line); color: var(--muted); padding: 0 6px; border-radius: 3px; white-space: nowrap; }
+.chip.hot { color: var(--crit); border-color: color-mix(in srgb, var(--crit) 40%, transparent); background: var(--crit-soft); }
+.chip.acc { color: var(--accent); border-color: color-mix(in srgb, var(--accent) 40%, transparent); }
+.cve { font-family: var(--mono); font-size: 12.5px; font-weight: 500; text-decoration: none; white-space: nowrap; }
+.cve:hover { text-decoration: underline; }
+.due { font-family: var(--mono); font-size: 11.5px; }
+.due.late { color: var(--crit); } .due.soon { color: var(--warn); }
+
+/* tools + tables */
+.tools { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.search { flex: 1 1 16rem; min-width: 0; font: inherit; font-size: 14px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 8px 11px; }
+.search::placeholder { color: var(--faint); }
+.seg { display: inline-flex; border: 1px solid var(--line); border-radius: 4px; overflow: hidden; flex-wrap: wrap; }
+.seg button { appearance: none; border: 0; border-right: 1px solid var(--line); background: var(--surface); color: var(--muted); font: inherit; font-size: 12.5px; padding: 7px 11px; cursor: pointer; }
+.seg button:last-child { border-right: 0; }
+.seg button[aria-pressed="true"] { background: var(--ink); color: var(--bg); }
+.sel { font: inherit; font-size: 13px; color: var(--ink); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 7px 8px; }
+.count { font-family: var(--mono); font-size: 11.5px; color: var(--faint); margin-left: auto; }
+.tbox { overflow: auto; max-height: 70vh; border: 1px solid var(--line); border-radius: 4px; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; font-variant-numeric: tabular-nums; }
+th { position: sticky; top: 0; background: var(--sunk); text-align: left; font-family: var(--display); font-stretch: 85%; font-weight: 600; font-size: 11.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--muted); padding: 0; border-bottom: 1px solid var(--line); white-space: nowrap; z-index: 1; }
+th button { appearance: none; background: none; border: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; padding: 9px 10px; cursor: pointer; width: 100%; text-align: left; }
+th button:hover { color: var(--ink); }
+th[aria-sort="ascending"] button::after { content: " ↑"; } th[aria-sort="descending"] button::after { content: " ↓"; }
+th.plain { padding: 9px 10px; }
+td { padding: 9px 10px; border-bottom: 1px solid var(--line); vertical-align: top; line-height: 1.4; }
+tr:last-child td { border-bottom: 0; }
+td.mut { color: var(--muted); } td.nw { white-space: nowrap; } td.sum { min-width: 18rem; color: var(--muted); }
+.score { display: inline-flex; align-items: center; gap: 7px; font-family: var(--mono); font-weight: 500; }
+.score i { width: 34px; height: 6px; background: var(--sunk); border-radius: 2px; overflow: hidden; display: inline-block; }
+.score i b { display: block; height: 100%; background: var(--warn); }
+.score.max { color: var(--crit); } .score.max i b { background: var(--crit); }
+.morebtn { align-self: center; appearance: none; background: var(--surface); border: 1px solid var(--line); color: var(--ink); font: inherit; font-size: 13px; padding: 8px 16px; border-radius: 4px; cursor: pointer; }
+.morebtn:hover { border-color: var(--muted); }
+/* government record */
+.rec { display: grid; grid-template-columns: 6.2rem minmax(0, 1fr); gap: 14px; padding: 12px 0; border-top: 1px solid var(--line); }
+.rec:first-child { border-top: 0; padding-top: 2px; }
+.rec-d { display: flex; flex-direction: column; gap: 2px; font-family: var(--mono); }
+.rec-day { font-size: 12.5px; color: var(--ink); font-weight: 500; }
+.rec-br { font-size: 10.5px; letter-spacing: .06em; text-transform: uppercase; color: var(--faint); }
+.rec-b { display: flex; flex-direction: column; gap: 4px; min-width: 0; }
+.rec-k { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12px; color: var(--muted); }
+.rec-k .chip { white-space: normal; max-width: 100%; overflow-wrap: anywhere; }
+.sel { max-width: 100%; }
+.rec-x { font-size: 12.5px; color: var(--muted); line-height: 1.45; max-width: 90ch; }
+@media (max-width: 520px) { .rec { grid-template-columns: 1fr; gap: 6px; } .rec-d { flex-direction: row; gap: 10px; align-items: baseline; } }
+/* votes */
+.votes { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 12px; }
+.vote { border: 1px solid var(--line); border-radius: 5px; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px; background: var(--bg); min-width: 0; }
+.vote-h { display: flex; justify-content: space-between; gap: 8px; align-items: center; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.vote-t { font-size: 14px; line-height: 1.35; }
+.vote-m { font-family: var(--mono); font-size: 12px; color: var(--muted); margin-right: 6px; white-space: nowrap; }
+.vote-q { font-size: 12.5px; color: var(--muted); }
+.vbar { display: flex; height: 8px; border-radius: 2px; overflow: hidden; background: var(--sunk); margin-top: 2px; }
+.vbar i { display: block; height: 100%; }
+.vb-y { background: var(--ink); } .vb-n { background: var(--faint); } .vb-p { background: var(--line); } .vb-x { background: var(--sunk); }
+.vote-n { display: flex; flex-wrap: wrap; gap: 4px 12px; font-size: 12.5px; color: var(--muted); font-variant-numeric: tabular-nums; }
+.vote-n b { color: var(--ink); font-weight: 600; }
+.vote-p { display: flex; flex-wrap: wrap; gap: 4px 12px; font-family: var(--mono); font-size: 11.5px; color: var(--muted); padding-top: 6px; border-top: 1px dashed var(--line); }
+/* grades */
+.gr { display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--muted); white-space: nowrap; }
+.gr b { display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 3px; font-family: var(--display); font-weight: 800; font-size: 11.5px; color: var(--bg); }
+.gr-A b { background: var(--ok); } .gr-B b { background: var(--bar); } .gr-C b { background: var(--warn); } .gr-D b { background: var(--crit); }
+.gr-dot { vertical-align: 1px; }
+.gr-flag { font-style: normal; font-family: var(--mono); font-size: 10.5px; color: var(--warn); border: 1px dashed color-mix(in srgb, var(--warn) 60%, transparent); border-radius: 3px; padding: 0 5px; }
+/* reader */
+html.reading { overflow: hidden; }
+.rd-wrap { position: fixed; inset: 0; z-index: 50; background: color-mix(in srgb, var(--bg) 55%, transparent); backdrop-filter: blur(3px); display: flex; justify-content: center; }
+.rd { background: var(--bg); width: 100%; max-width: 860px; height: 100%; display: flex; flex-direction: column; border-inline: 1px solid var(--line); box-shadow: 0 0 60px rgb(0 0 0 / .25); }
+@media (prefers-reduced-motion: no-preference) { .rd { animation: rdin .28s cubic-bezier(.2,.7,.2,1); } @keyframes rdin { from { transform: translateY(18px); opacity: .4; } } }
+.rd-bar { display: flex; align-items: center; gap: 14px; padding: calc(10px + env(safe-area-inset-top, 0px)) max(16px, env(safe-area-inset-right, 0px)) 10px max(16px, env(safe-area-inset-left, 0px)); border-bottom: 1px solid var(--line); }
+.rd-close { appearance: none; background: var(--surface); border: 1px solid var(--line); color: var(--ink); font: inherit; font-size: 14px; font-weight: 500; padding: 8px 14px; border-radius: 4px; cursor: pointer; }
+.rd-src { font-family: var(--mono); font-size: 11.5px; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.rd-scroll { overflow-y: auto; -webkit-overflow-scrolling: touch; flex: 1; }
+.rd-doc { padding: 22px max(18px, env(safe-area-inset-right, 0px)) calc(48px + env(safe-area-inset-bottom, 0px)) max(18px, env(safe-area-inset-left, 0px)); display: flex; flex-direction: column; gap: 14px; }
+.rd-grade { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 14px; align-items: start; background: var(--surface); border: 1px solid var(--line); border-radius: 6px; padding: 14px; }
+.rd-letter { width: 46px; height: 46px; border-radius: 5px; display: grid; place-items: center; font-family: var(--display); font-weight: 800; font-size: 26px; color: var(--bg); }
+.rd-grade.gr-A .rd-letter { background: var(--ok); } .rd-grade.gr-B .rd-letter { background: var(--bar); } .rd-grade.gr-C .rd-letter { background: var(--warn); } .rd-grade.gr-D .rd-letter { background: var(--crit); }
+.rd-gl { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 15px; letter-spacing: .02em; }
+.rd-gw { font-size: 13.5px; color: var(--muted); margin-top: 2px; }
+.rd-scale { font-family: var(--mono); font-size: 10.5px; color: var(--faint); margin-top: 6px; }
+.rd-flag { font-size: 13px; color: var(--ink); background: color-mix(in srgb, var(--warn) 12%, transparent); border: 1px dashed color-mix(in srgb, var(--warn) 55%, transparent); border-radius: 5px; padding: 10px 12px; }
+.rd-flag b { color: var(--warn); }
+.rd-title { font-family: var(--display); font-stretch: 80%; font-weight: 700; font-size: clamp(1.6rem, 4.5vw, 2.3rem); line-height: 1.08; margin: 4px 0 0; text-wrap: balance; }
+.rd-detail { color: var(--muted); font-size: 14.5px; margin: 0; }
+.rd-body { display: flex; flex-direction: column; gap: 12px; font-size: 16.5px; line-height: 1.65; max-width: 68ch; border-top: 1px solid var(--line); padding-top: 18px; }
+.rd-body p, .rd-body pre { margin: 0; overflow-wrap: anywhere; }
+.rd-body .rd-h { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 1.15rem; margin: 10px 0 0; }
+.rd-body .rd-li { padding-left: 4px; }
+.rd-body pre { font-family: var(--mono); font-size: 13px; white-space: pre-wrap; }
+.rd-note { font-size: 13.5px; color: var(--muted); background: var(--sunk); border-radius: 5px; padding: 10px 12px; }
+.rd-orig { font-family: var(--mono); font-size: 12px; color: var(--faint); margin: 10px 0 0; padding-top: 14px; border-top: 1px solid var(--line); }
+.rd-orig-a { color: var(--muted); }
+/* masthead art */
+.sigbox { position: relative; align-self: stretch; min-width: min(42vw, 420px); min-height: 120px; display: flex; align-items: flex-end; justify-content: flex-end; }
+#sig { position: absolute; inset: -8px 0 0 0; width: 100%; height: 100%; display: block; -webkit-mask-image: radial-gradient(ellipse at 60% 55%, #000 45%, transparent 82%); mask-image: radial-gradient(ellipse at 60% 55%, #000 45%, transparent 82%); }
+.sigbox .asof { position: relative; background: color-mix(in srgb, var(--bg) 70%, transparent); padding: 2px 0 0 8px; }
+@media (max-width: 640px) { .figs { grid-template-columns: repeat(2, minmax(0, 1fr)); } .fig { padding: 12px 14px; } .fig-v { font-size: 2rem; } .fig-s { font-size: 11.5px; } .sigbox { min-width: 0; min-height: 90px; justify-content: flex-start; } }
+/* ticker */
+.ticker { overflow: hidden; border-top: 1px solid var(--line); font-family: var(--mono); font-size: 12px; white-space: nowrap; -webkit-mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(90deg, transparent, #000 4%, #000 96%, transparent); }
+.tk-track { display: inline-flex; gap: 28px; padding: 7px 0; }
+@media (prefers-reduced-motion: no-preference) { .tk-track { animation: tk var(--tk-dur, 60s) linear infinite; } .ticker:hover .tk-track { animation-play-state: paused; } }
+@media (prefers-reduced-motion: reduce) { .ticker { overflow-x: auto; } }
+@keyframes tk { to { transform: translateX(-50%); } }
+.tk { color: var(--muted); } .tk i { font-style: normal; color: var(--faint); margin-right: 4px; } .tk em { font-style: normal; color: var(--faint); margin-left: 4px; }
+.tk-live { color: var(--ink); } .tk-live em { color: var(--crit); }
+/* section heads */
+.vhead { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; padding: 4px 0 6px; }
+.art { width: clamp(72px, 10vw, 104px); height: auto; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
+.art path { stroke-dasharray: 1; stroke-dashoffset: 0; }
+@media (prefers-reduced-motion: no-preference) { .art path { animation: draw 1.6s cubic-bezier(.6,0,.2,1) both; } @keyframes draw { from { stroke-dashoffset: 1; } } }
+.vhead-t h2 { font-family: var(--display); font-stretch: 72%; font-weight: 800; text-transform: uppercase; font-size: clamp(1.9rem, 5vw, 3rem); line-height: .95; margin: 0; letter-spacing: -.005em; }
+.vhead-t p { margin: 6px 0 0; color: var(--muted); font-size: 15px; max-width: 60ch; }
+/* motion on data */
+@media (prefers-reduced-motion: no-preference) {
+  .chart rect[data-i] { transform-box: fill-box; transform-origin: 50% 100%; animation: grow .7s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes grow { from { transform: scaleY(0); } }
+  .rk-f { transform-origin: 0 50%; animation: growx .8s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes growx { from { transform: scaleX(0); } }
+  .vbar i { transform-origin: 0 50%; animation: growx .9s cubic-bezier(.2,.7,.2,1) both; }
+  .panel, .figs { animation: rise .45s cubic-bezier(.2,.7,.2,1) both; }
+  .grid > .panel:nth-child(2) { animation-delay: .06s; }
+  .it-t, .game { transition: color .15s, transform .2s, border-color .2s; }
+  .game:hover { transform: translateY(-2px); }
+}
+/* sports */
+.games { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 10px; }
+.game { border: 1px solid var(--line); border-radius: 5px; padding: 10px 12px; background: var(--bg); display: flex; flex-direction: column; gap: 6px; cursor: pointer; min-width: 0; }
+.game:hover { border-color: var(--muted); }
+.game-wide { grid-column: 1 / -1; cursor: default; }
+.game-live { border-color: color-mix(in srgb, var(--crit) 45%, var(--line)); }
+.game-h { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.game-t { font-weight: 600; }
+.game-f { font-size: 11.5px; color: var(--faint); border-top: 1px dashed var(--line); padding-top: 6px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.live-chip { font-family: var(--mono); font-size: 10.5px; color: var(--crit); border: 1px solid color-mix(in srgb, var(--crit) 45%, transparent); padding: 0 6px; border-radius: 3px; display: inline-flex; align-items: center; gap: 5px; }
+.live-chip::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--crit); }
+@media (prefers-reduced-motion: no-preference) { .live-chip::before { animation: blink 1.2s ease-in-out infinite; } }
+.tm { display: grid; grid-template-columns: 4px 3.6rem minmax(0, 1fr) auto 2.6rem; gap: 8px; align-items: center; color: var(--muted); }
+.tm-sw { width: 4px; height: 22px; border-radius: 2px; background: var(--line); display: inline-block; }
+.tm-sw.sm { width: 8px; height: 8px; border-radius: 2px; vertical-align: 0; }
+.tm-ab { font-family: var(--display); font-stretch: 80%; font-weight: 700; font-size: 18px; color: var(--ink); letter-spacing: .02em; }
+.tm-nm { font-size: 12px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.tm-rec { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.tm-sc { font-family: var(--display); font-stretch: 80%; font-weight: 700; font-size: 20px; text-align: right; font-variant-numeric: tabular-nums; color: var(--muted); }
+.tm-win, .tm-win .tm-sc, .tm-win .tm-ab { color: var(--ink); }
+.tm-win .tm-sc { color: var(--accent); }
+.bouts { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); gap: 4px 20px; }
+.bout { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 8px; font-size: 13px; padding: 5px 0; border-top: 1px solid var(--line); color: var(--muted); }
+.bout .vs { font-family: var(--mono); font-size: 10.5px; color: var(--faint); } .bout .tm-win { color: var(--ink); font-weight: 600; }
+.bout-d { grid-column: 1 / -1; font-family: var(--mono); font-size: 10.5px; color: var(--faint); }
+.field { margin: 0; padding: 0; list-style: none; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 240px), 1fr)); gap: 2px 20px; }
+.field li { display: grid; grid-template-columns: 2ch minmax(0, 1fr) auto; gap: 10px; font-size: 13px; padding: 5px 0; border-top: 1px solid var(--line); }
+.field .pos { font-family: var(--mono); color: var(--faint); } .field .tm-sc { font-size: 15px; }
+.stands { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 14px; }
+.stand-h { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
+.tbox-flat { max-height: none; }
+@media (max-width: 760px) { .hide-sm { display: none; } td.sum { min-width: 0; } }
+
+.empty, .loading, .failed { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; padding: 28px 12px; color: var(--faint); font-family: var(--mono); font-size: 12px; text-align: center; }
+.failed::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--crit); }
+.loading::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--bar); }
+@media (prefers-reduced-motion: no-preference) { .loading::before { animation: blink 1s ease-in-out infinite; } }
+
+.method { font-size: 13.5px; color: var(--muted); }
+.method dl { display: grid; grid-template-columns: minmax(0, 11rem) minmax(0, 1fr); gap: 10px 20px; margin: 0; }
+.method dt { color: var(--ink); font-weight: 600; } .method dd { margin: 0; max-width: 70ch; }
+@media (max-width: 600px) { .method dl { grid-template-columns: 1fr; gap: 2px; } .method dd { margin-bottom: 10px; } }
+footer { border-top: 1px solid var(--line); font-size: 12px; color: var(--faint); font-family: var(--mono); }
+footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; padding-block: 18px; }
+@media (max-width: 640px) { .mast { grid-template-columns: 1fr; } .asof { text-align: left; } }
+</style>
+
+<div class="strip"><div class="wrap">
+  <span class="tlp" title="Traffic Light Protocol: all content is public and may be shared freely">TLP:CLEAR</span>
+  <span class="live"><span class="dot" id="live-dot"></span><span id="live-text">Connecting to feeds…</span></span>
+  <span class="spacer"></span>
+  <span id="clock">—</span>
+  <button class="theme" id="theme" type="button" aria-label="Switch color theme">Theme</button>
+</div></div>
+
+<header class="wrap mast">
+  <h1 class="brand">Plain<em>/</em>sight</h1>
+  <div class="sigbox"><canvas id="sig" aria-hidden="true"></canvas><div class="asof" id="asof">Public sources only<br>Politics · Cyber · Sports</div></div>
+  <p class="lede" id="lede">Pulling exploited vulnerabilities, ransomware leak sites, critical CVEs, security and political news, and government actions from public sources.</p>
+</header>
+
+<div class="rail"><div class="wrap"><nav aria-label="Sections">
+  <a href="#brief" data-view="brief">Brief</a>
+  <a href="#president" data-view="president">President<span class="n" id="n-president"></span></a>
+  <a href="#congress" data-view="congress">Congress<span class="n" id="n-congress"></span></a>
+  <a href="#intel" data-view="intel">FBI &amp; Intel<span class="n" id="n-intel"></span></a>
+  <a href="#courts" data-view="courts">Courts<span class="n" id="n-courts"></span></a>
+  <a href="#world" data-view="world">World<span class="n" id="n-world"></span></a>
+  <a href="#sports" data-view="sports">Sports<span class="n" id="n-sports"></span></a>
+  <a href="#exploited" data-view="exploited">Exploited<span class="n" id="n-exploited"></span></a>
+  <a href="#ransomware" data-view="ransomware">Ransomware<span class="n" id="n-ransomware"></span></a>
+  <a href="#cves" data-view="cves">Critical CVEs<span class="n" id="n-cves"></span></a>
+  <a href="#news" data-view="news">Security news<span class="n" id="n-news"></span></a>
+  <a href="#sources" data-view="sources">Sources</a>
+</nav></div><div class="ticker" id="ticker" hidden aria-label="Latest scores"></div></div>
+
+<main class="wrap" id="main"></main>
+
+<footer><div class="wrap">
+  <span>Plainsight · public intelligence, pulled live</span>
+  <span>Built by Zero</span>
+</div></footer>
+
+<script>
+(() => {
+'use strict';
+/* ---------------- data ---------------- */
+const SETS = ['kev', 'cves', 'ransomware', 'news', 'politics', 'votes', 'sports'];
+const D = {};            // loaded payloads
+const ERR = {};          // load failures
+let SNAPSHOT = false;
+
+async function loadSet(name) {
+  try {
+    const r = await fetch('/api/' + name, {headers: {accept: 'application/json'}});
+    if (!r.ok) throw new Error('HTTP ' + r.status);
+    D[name] = await r.json();
+  } catch (e) {
+    const s = document.getElementById('snap-' + name);
+    if (s) { try { D[name] = JSON.parse(s.textContent); SNAPSHOT = true; } catch (x) { ERR[name] = 'Unreadable snapshot'; } }
+    else ERR[name] = e.message || 'Failed';
+  }
+  render();
+}
+
+/* ---------------- utils ---------------- */
+const $ = (s, el = document) => el.querySelector(s);
+const h = (tag, attrs, ...kids) => {
+  const e = document.createElement(tag);
+  if (attrs) for (const [k, v] of Object.entries(attrs)) {
+    if (v == null || v === false) continue;
+    if (k === 'class') e.className = v; else if (k === 'text') e.textContent = v;
+    else if (k.startsWith('on')) e.addEventListener(k.slice(2), v); else e.setAttribute(k, v === true ? '' : v);
+  }
+  for (const k of kids.flat()) if (k != null && k !== false) e.append(k instanceof Node ? k : String(k));
+  return e;
+};
+const safe = (u) => (typeof u === 'string' && /^https:\/\//.test(u) ? u : null);
+const A = (url, text, cls) => safe(url) ? h('a', {href: safe(url), target: '_blank', rel: 'noopener noreferrer', class: cls, text}) : h('span', {class: cls, text});
+const nf = new Intl.NumberFormat('en-US');
+const N = (n) => (n == null ? '—' : nf.format(n));
+const PCT = (v) => (v == null ? '—' : (v > 0 ? '+' : '') + Math.round(v * 100) + '%');
+const EP = (v) => (v == null ? '—' : v >= 0.1 ? Math.round(v * 100) + '%' : (v * 100).toFixed(1) + '%');
+const MON = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+const ut = (s) => Date.parse(s.length === 10 ? s + 'T00:00:00Z' : s);
+const DATE = (s) => { if (!s) return '—'; const d = new Date(ut(s)); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}, ${d.getUTCFullYear()}`; };
+const SHORT = (s) => { const d = new Date(ut(s)); return `${MON[d.getUTCMonth()]} ${d.getUTCDate()}`; };
+const AGO = (s) => { const ms = Date.now() - Date.parse(s); if (!isFinite(ms)) return '—'; const m = ms / 6e4; if (m < 60) return Math.max(1, Math.round(m)) + 'm ago'; if (m < 2880) return Math.round(m / 60) + 'h ago'; return Math.round(m / 1440) + 'd ago'; };
+const isoDay = (t) => new Date(t).toISOString().slice(0, 10);
+const back = (day, n) => isoDay(ut(day) - n * 864e5);
+const maxOf = (rows, k) => rows.reduce((m, r) => (r[k] > m ? r[k] : m), '');
+let regionName = (c) => c;
+try { const dn = new Intl.DisplayNames(['en'], {type: 'region'}); regionName = (c) => { try { return dn.of(c) || c; } catch (e) { return c; } }; } catch (e) {}
+
+/* ---------------- derived data ---------------- */
+const TAGS = [
+  ['Nation-state', /\b(china|chinese|beijing|russia|russian|kremlin|iran|iranian|tehran|north korea|north korean|dprk|pyongyang|apt ?\d+|\w+ typhoon|lazarus|kimsuky|sandworm|fancy bear|cozy bear|state[- ]sponsored|state[- ]backed|nation[- ]state|espionage|spies|spy)\b/i],
+  ['Ransomware', /ransomware|extortion|leak site/i],
+  ['Breach', /\b(breach\w*|data leak\w*|leaked|stolen data|data theft|exposed)\b/i],
+  ['Exploited flaw', /zero[- ]day|0-day|\bexploit\w*|cve-\d|vulnerab\w*|\bflaws?\b|\bpatch\w*/i],
+  ['Election', /\b(elections?|electoral|ballots?|voters?|voting|midterms?|polling)\b/i],
+  ['Law & sanctions', /\b(congress|senate|lawmakers?|legislation|sanctions?|sanctioned|executive order|white house|indict\w*|charged|sentenced|arrest\w*|extradit\w*|doj|fbi|cisa|nsa|regulat\w*|pentagon)\b/i],
+  ['Cyber', /\b(cyber\w*|hack\w*|malware|ransomware|breach\w*|phishing|spyware|ddos|botnet|infosec|encryption|surveillance)\b/i],
+];
+const HOT = new Set(['Nation-state', 'Ransomware']);
+const memo = {};
+function news() {
+  if (!D.news) return null;
+  if (memo.news?.src === D.news) return memo.news.v;
+  const v = D.news.rows.map((r) => {
+    const tags = TAGS.filter(([, re]) => re.test(r.title)).map(([n]) => n).filter((t) => t !== 'Cyber');
+    return {...r, date: r.published, tags, both: tags.some((t) => t === 'Nation-state' || t === 'Election' || t === 'Law & sanctions')};
+  });
+  memo.news = {src: D.news, v};
+  return v;
+}
+const CYBER = /\b(cyber\w*|hack\w*|malware|ransomware|botnet|spyware|phishing|ddos|encryption|critical infrastructure|data breach\w*|information security|intrusion|computer fraud|dark ?web|cryptocurrency|crypto|money laundering)\b/i;
+function politics() {
+  if (!D.politics) return null;
+  if (memo.pol?.src === D.politics) return memo.pol.v;
+  const v = D.politics.rows.map((r) => ({...r, cyber: CYBER.test(r.title + ' ' + r.kind + ' ' + r.detail)}));
+  memo.pol = {src: D.politics, v};
+  return v;
+}
+function overlap() {
+  const nw = news(), pl = politics();
+  if (!nw && !pl) return null;
+  return [
+    ...(nw || []).filter((r) => r.both).map((r) => ({...r, date: r.published, _t: 'news'})),
+    ...(pl || []).filter((r) => r.cyber).map((r) => ({...r, tags: [r.kind], _t: 'record'})),
+  ].sort((a, b) => b.date.localeCompare(a.date));
+}
+function kevStats() {
+  const k = D.kev?.rows; if (!k) return null;
+  const latest = maxOf(k, 'added'), from = back(latest, 29);
+  const w = k.filter((r) => r.added >= from && r.added <= latest);
+  return {latest, n30: w.length, r30: w.filter((r) => r.ransomware === 'Known').length, total: k.length};
+}
+function ransomStats() {
+  const v = D.ransomware?.rows; if (!v) return null;
+  const L = maxOf(v, 'posted');
+  const in_ = (a, b) => v.filter((r) => r.posted >= a && r.posted <= b);
+  const w = in_(back(L, 6), L), p = in_(back(L, 13), back(L, 7)), m = in_(back(L, 29), L);
+  return {latest: L, n7: w.length, prev: p.length, chg: p.length ? (w.length - p.length) / p.length : null, groups7: new Set(w.map((r) => r.group)).size, n30: m.length, us30: m.filter((r) => r.country === 'US').length, m};
+}
+const countBy = (rows, key, top) => { const c = new Map(); for (const r of rows) { const k = key(r); if (k) c.set(k, (c.get(k) || 0) + 1); } return [...c].sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(String(b[0]))).slice(0, top); };
+function weekly() {
+  const v = D.ransomware?.rows; if (!v) return [];
+  const mon = (s) => { const t = ut(s); return isoDay(t - ((new Date(t).getUTCDay() + 6) % 7) * 864e5); };
+  const days = v.map((r) => r.posted).sort();
+  const first = mon(days[0]) === days[0] ? days[0] : isoDay(ut(mon(days[0])) + 7 * 864e5);
+  return countBy(days.filter((d) => d >= first).map((d) => ({d})), (r) => mon(r.d), 1e3).sort((a, b) => a[0].localeCompare(b[0])).map(([k, n]) => ({k, n, label: SHORT(k), tip: 'Week of ' + DATE(k)}));
+}
+function kevMonthly() {
+  const k = D.kev?.rows; if (!k) return [];
+  const latest = maxOf(k, 'added'); let y = +latest.slice(0, 4), m = +latest.slice(5, 7);
+  const out = [];
+  for (let i = 0; i < 24; i++) { out.unshift({k: `${y}-${String(m).padStart(2, '0')}`, n: 0, s: 0}); if (--m === 0) { m = 12; y--; } }
+  const at = new Map(out.map((r) => [r.k, r]));
+  for (const r of k) { const b = at.get(r.added.slice(0, 7)); if (b) { b.n++; if (r.ransomware === 'Known') b.s++; } }
+  return out.map((r) => ({...r, label: `${MON[+r.k.slice(5) - 1]} ’${r.k.slice(2, 4)}`, tip: `${MON[+r.k.slice(5) - 1]} ${r.k.slice(0, 4)}`}));
+}
+const kevSet = () => (D.kev ? (memo.kevset?.src === D.kev ? memo.kevset.v : (memo.kevset = {src: D.kev, v: new Set(D.kev.rows.map((r) => r.cve))}).v) : null);
+
+/* ---------------- components ---------------- */
+const state = (name) => ERR[name] ? h('div', {class: 'failed', text: 'This feed did not load. Check Sources for details.'}) : h('div', {class: 'loading', text: 'Loading'});
+
+function bars(rows, opts = {}) {
+  const box = h('div', {class: 'chart'});
+  if (!rows.length) { box.append(h('div', {class: 'empty', text: 'No data in this window'})); return box; }
+  const draw = () => {
+    const W = Math.max(box.clientWidth || 640, 280), H = opts.height || 210, mt = 10, mb = 24;
+    const max = Math.max(...rows.map((r) => r.n), 1);
+    const step = Math.pow(10, Math.floor(Math.log10(max))) * (max / Math.pow(10, Math.floor(Math.log10(max))) > 5 ? 2 : max / Math.pow(10, Math.floor(Math.log10(max))) > 2 ? 1 : 0.5);
+    const top = Math.ceil(max / step) * step;
+    const ticks = []; for (let t = 0; t <= top + 1e-9; t += step) ticks.push(Math.round(t));
+    const ml = Math.max(...ticks.map((t) => N(t).length)) * 6.6 + 10;
+    const y = (v) => H - mb - (v / top) * (H - mb - mt);
+    const iw = W - ml - 4, bw = iw / rows.length, w = Math.min(28, bw * 0.72);
+    const ns = 'http://www.w3.org/2000/svg', S = (t, a) => { const e = document.createElementNS(ns, t); for (const k in a) e.setAttribute(k, a[k]); return e; };
+    const svg = S('svg', {viewBox: `0 0 ${W} ${H}`, role: 'img', 'aria-label': opts.label || 'Bar chart'});
+    for (const t of ticks) { svg.append(S('line', {x1: ml, x2: W - 4, y1: y(t), y2: y(t), class: 'grid-l'})); const tx = S('text', {x: ml - 8, y: y(t) + 3.5, 'text-anchor': 'end'}); tx.textContent = N(t); svg.append(tx); }
+    const every = Math.max(1, Math.ceil(60 / bw));
+    rows.forEach((r, i) => {
+      const x = ml + i * bw + (bw - w) / 2;
+      svg.append(S('rect', {x, width: w, y: y(r.n), height: Math.max(0, y(0) - y(r.n)), rx: 2, fill: 'var(--bar)', 'data-i': i}));
+      if (opts.sub && r.s) svg.append(S('rect', {x, width: w, y: y(r.s), height: Math.max(0, y(0) - y(r.s)), rx: 2, fill: 'var(--crit)', 'data-i': i}));
+      if ((rows.length - 1 - i) % every === 0) { const tx = S('text', {x: x + w / 2, y: H - 7, 'text-anchor': 'middle'}); tx.textContent = r.label; svg.append(tx); }
+    });
+    const hit = S('rect', {x: ml, y: mt, width: iw, height: H - mt - mb, fill: 'transparent'}); svg.append(hit);
+    const tip = h('div', {class: 'tip', hidden: true});
+    hit.addEventListener('pointermove', (ev) => {
+      const bb = svg.getBoundingClientRect(), sx = (ev.clientX - bb.left) * (W / bb.width);
+      const i = Math.min(rows.length - 1, Math.max(0, Math.floor((sx - ml) / bw))), r = rows[i];
+      svg.querySelectorAll('rect[data-i]').forEach((b) => b.setAttribute('opacity', +b.dataset.i === i ? 1 : 0.45));
+      tip.replaceChildren(h('div', {class: 'k', text: r.tip}), h('div', null, (opts.unit || 'Count') + ' ', h('b', {text: N(r.n)})), opts.sub ? h('div', null, opts.subUnit + ' ', h('b', {text: N(r.s)})) : null);
+      tip.hidden = false;
+      const px = ((ml + i * bw + bw / 2) / W) * bb.width;
+      tip.style.left = Math.min(Math.max(0, px - tip.offsetWidth / 2), box.clientWidth - tip.offsetWidth) + 'px';
+      tip.style.top = Math.max(0, (y(r.n) / H) * bb.height - tip.offsetHeight - 8) + 'px';
+    });
+    hit.addEventListener('pointerleave', () => { tip.hidden = true; svg.querySelectorAll('rect[data-i]').forEach((b) => b.setAttribute('opacity', 1)); });
+    box.replaceChildren(svg, tip);
+  };
+  requestAnimationFrame(draw);
+  new ResizeObserver(() => draw()).observe(box);
+  return box;
+}
+function ranked(pairs, name = (x) => x) {
+  if (!pairs.length) return h('div', {class: 'empty', text: 'No data in this window'});
+  const max = pairs[0][1] || 1;
+  return h('div', {class: 'rank'}, pairs.map(([k, n]) => h('div', {class: 'rk'}, h('span', {class: 'rk-n', title: name(k), text: name(k)}), h('span', {class: 'rk-t'}, h('span', {class: 'rk-f', style: `width:${(n / max) * 100}%`})), h('span', {class: 'rk-v', text: N(n)}))));
+}
+const panel = (title, note, body, opts = {}) => h('section', {class: 'panel' + (opts.wide ? ' wide' : '')},
+  h('div', {class: 'ph'}, h('h2', {text: title}), opts.more ? h('a', {class: 'more', href: opts.more[0], text: opts.more[1]}) : null),
+  note ? h('p', {class: 'note', text: note}) : null, body);
+const tagChips = (tags) => tags.map((t) => h('span', {class: 'chip' + (HOT.has(t) ? ' hot' : ''), text: t}));
+const dueChip = (due) => {
+  if (!due) return null;
+  const days = Math.round((ut(due) - Date.now()) / 864e5);
+  return h('span', {class: 'due' + (days < 0 ? ' late' : days <= 7 ? ' soon' : ''), text: days < 0 ? `Due ${-days}d ago` : days === 0 ? 'Due today' : `Due in ${days}d`});
+};
+
+/* sortable, searchable table with paging */
+const TS = {};
+function table(id, rows, cols, o) {
+  const st = (TS[id] ||= {q: '', sort: o.sort, dir: o.dir || 'desc', limit: 150});
+  const wrap = h('div', {class: 'view-table', style: 'display:flex;flex-direction:column;gap:10px'});
+  const countEl = h('span', {class: 'count'});
+  const search = h('input', {class: 'search', type: 'search', id: 'q-' + id, placeholder: o.placeholder, 'aria-label': o.placeholder, value: st.q});
+  const tools = h('div', {class: 'tools'}, search, o.extra || null, countEl);
+  const tbody = h('tbody');
+  const ths = cols.map((c) => c.sort === false ? h('th', {class: 'plain' + (c.cls?.includes('hide-sm') ? ' hide-sm' : ''), text: c.label})
+    : h('th', {class: c.cls?.includes('hide-sm') ? 'hide-sm' : null, 'aria-sort': st.sort === c.key ? (st.dir === 'asc' ? 'ascending' : 'descending') : null},
+      h('button', {type: 'button', text: c.label, onclick: () => { st.dir = st.sort === c.key ? (st.dir === 'asc' ? 'desc' : 'asc') : (c.num || c.date ? 'desc' : 'asc'); st.sort = c.key; ths.forEach((t) => t.removeAttribute('aria-sort')); ths[cols.indexOf(c)].setAttribute('aria-sort', st.dir === 'asc' ? 'ascending' : 'descending'); fill(); }})));
+  const more = h('button', {class: 'morebtn', type: 'button', hidden: true, onclick: () => { st.limit += 300; fill(); }});
+  const fill = () => {
+    const base = o.filter ? rows.filter(o.filter) : rows;
+    let list = base;
+    if (st.q) { const q = st.q.toLowerCase(); list = list.filter((r) => o.search.some((k) => String(r[k] ?? '').toLowerCase().includes(q))); }
+    if (st.sort) { const k = st.sort, s = st.dir === 'asc' ? 1 : -1; list = list.slice().sort((a, b) => { const x = a[k], y = b[k]; if (x == null || x === '') return 1; if (y == null || y === '') return -1; return (typeof x === 'number' ? x - y : String(x).localeCompare(String(y))) * s; }); }
+    const shown = list.slice(0, st.limit);
+    tbody.replaceChildren(...shown.map((r) => h('tr', null, cols.map((c) => { const td = h('td', {class: c.cls}); c.cell(td, r); return td; }))));
+    if (!shown.length) tbody.append(h('tr', null, h('td', {colspan: cols.length}, h('div', {class: 'empty', text: 'Nothing matches'}))));
+    countEl.textContent = (list.length === base.length ? N(base.length) : `${N(list.length)} of ${N(base.length)}`) + ' ' + o.noun;
+    more.hidden = shown.length >= list.length;
+    more.textContent = `Show ${N(Math.min(300, list.length - shown.length))} more`;
+  };
+  let t; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { st.q = search.value.trim(); st.limit = 150; fill(); }, 120); });
+  fill();
+  wrap.append(tools, h('div', {class: 'tbox'}, h('table', null, h('thead', null, h('tr', null, ths)), tbody)), more);
+  wrap.refill = fill;
+  return wrap;
+}
+const seg = (opts, cur, on) => h('div', {class: 'seg', role: 'group'}, opts.map(([v, label]) => h('button', {type: 'button', 'aria-pressed': String(v === cur), text: label, onclick: () => on(v)})));
+
+/* ---------------- evidence grades ---------------- */
+// Same loaded-word list for everyone, whichever side the word comes from.
+const LOADED = /\b(radical left|radical right|far[- ]left|far[- ]right|extremists?|fake news|witch hunt|woke|maga|fascis\w*|communis\w* agenda|blowout|smash(es|ed|ing)?|crush(es|ed|ing)?|slams?|slammed|destroy\w*|disastrous|disaster|catastroph\w*|historic|unprecedented|best ever|worst ever|greatest|incredible|tremendous|massive|failed|failing|corrupt\w*|rigged|shameful|outrageous|lies|lying|hoax|sham|propaganda|so-called|what they are saying|was right|defy the odds)\b/gi;
+const loadedIn = (text) => [...new Set((String(text || '').match(LOADED) || []).map((w) => w.toLowerCase()))];
+const G = {
+  A: 'Primary record or confirmed fact',
+  B: 'Official account or nonpartisan analysis',
+  C: 'Allegation or secondary report',
+  D: 'Unverified claim',
+};
+function grade(item, type) {
+  const g = (letter, label, why) => ({letter, label, why});
+  const t = item.title || '';
+  if (type === 'score') return g('A', 'Official result', 'Score and game status as recorded by the league, via ESPN.');
+  if (type === 'vote') return g('A', 'Official record', 'The tally exactly as the House Clerk or Senate recorded it.');
+  if (type === 'kev') return g('A', 'Government-confirmed', 'CISA has confirmed this flaw is being exploited in the wild.');
+  if (type === 'cve') return /analyzed|modified/i.test(item.status || '') ? g('A', 'NVD-analyzed record', 'NIST has reviewed this entry and its score.') : g('B', 'Awaiting NVD analysis', 'The score comes from the reporting organization and has not been reviewed by NIST yet.');
+  if (type === 'ransom') return g('D', 'Unverified criminal claim', 'Posted by the attackers on their own leak site. Victims often have not confirmed it, and some claims are false or recycled.');
+  if (type === 'wanted') return g('A', 'Official FBI list', 'The FBI’s own list. The charges are accusations until proven in court.');
+  if (type === 'news') {
+    const ks = kevSet();
+    const cves = t.match(/CVE-\d{4}-\d+/gi) || [];
+    if (ks && cves.some((c) => ks.has(c.toUpperCase()))) return g('B', 'Corroborated report', 'Reporting by a security outlet. CISA has independently confirmed exploitation of the flaw it names.');
+    return g('C', 'Secondary report', 'Reporting by a specialist outlet. Check key claims against the primary source: the vendor advisory, CISA, or the court filing.');
+  }
+  // government record
+  const k = item.kind || '', s = item.source || '';
+  if (s === 'Supreme Court') return g('A', 'Court ruling', 'The Supreme Court’s own opinion. This is the law as the Court decided it.');
+  if (/Became law/.test(k)) return g('A', 'Enacted law', 'The official text of a law passed by Congress and signed.');
+  if (/Bill text|Congressional Record|Hearing/.test(k)) return g('A', 'Primary record', 'The official text as printed by the Government Publishing Office.');
+  if (s === 'Congress.gov') return g('A', 'Official record', 'The bill’s status as recorded by the Library of Congress.');
+  if (s === 'Federal Register' || s === 'GovInfo') return g('A', 'Primary record', 'The signed document as published in the official record.');
+  if (s === 'Treasury OFAC') return g('A', 'Official action', 'A legal sanctions action by the Treasury Department.');
+  if (s === 'CBO' || s === 'CRS' || s === 'GAO') return g('B', 'Nonpartisan analysis', 'Analysis by a nonpartisan agency of Congress. Estimates and findings can be revised.');
+  if (s === 'Justice Department' || s === 'FBI') {
+    if (/\b(sentenc(ed|e|ing)|convicted|conviction|pleads? guilty|pleaded guilty|found guilty|jury verdict|admits)\b/i.test(t)) return g('A', 'Court outcome', 'A conviction, guilty plea or sentence entered by a court.');
+    if (/\b(charged|indicted|indictment|arrested|accused|complaint|alleged|allegedly|charges)\b/i.test(t)) return g('C', 'Allegation', 'Charges are accusations. Everyone charged is presumed innocent unless proven guilty in court.');
+    return g('B', 'Official statement', 'The agency’s own account of its work.');
+  }
+  if (s === 'White House') {
+    if (/order|proclamation|memorand|determination/i.test(k)) return g('A', 'Signed document', 'A presidential document as signed and posted by the White House.');
+    return g('B', 'Official statement', 'The administration’s own account. Facts and figures in it are the White House’s claims; check them against primary records.');
+  }
+  if (s === 'United Nations') return g('B', 'Institutional report', 'The UN’s own news service reporting on its bodies and agencies.');
+  return g('B', 'Official statement', 'The agency’s own account of its work.');
+}
+function gradeDot(gr) { return h('span', {class: 'gr gr-' + gr.letter + ' gr-dot', title: `${gr.letter} · ${gr.label}: ${gr.why}`}, h('b', {text: gr.letter})); }
+function gradeBadge(gr, loaded) {
+  return h('span', {class: 'gr gr-' + gr.letter, title: `${gr.letter} · ${gr.label}: ${gr.why}${loaded?.length ? ' Contains loaded wording.' : ''}`}, h('b', {text: gr.letter}), h('span', {text: gr.label}), loaded?.length ? h('i', {class: 'gr-flag', text: 'Loaded words'}) : null);
+}
+
+/* ---------------- reader ---------------- */
+const READS = (() => { try { const s = document.getElementById('snap-reads'); return s ? JSON.parse(s.textContent) : {}; } catch (e) { return {}; } })();
+const readable = (u) => { try { const x = new URL(u); return x.protocol === 'https:' && /(^|\.)(gov|mil)$|(^|\.)everycrsreport\.com$/i.test(x.hostname); } catch (e) { return false; } };
+const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch (e) { return ''; } };
+let readerEl = null, lastFocus = null;
+function closeReader() { if (!readerEl) return; readerEl.remove(); readerEl = null; document.documentElement.classList.remove('reading'); lastFocus?.focus?.(); }
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeReader(); });
+// open(item, type, extraBlocks?)  item: {title, link, source, date, kind, detail, summary}
+function openReader(item, type, structured) {
+  closeReader();
+  lastFocus = document.activeElement;
+  const gr = grade(item, type);
+  const body = h('div', {class: 'rd-body'});
+  const loadedT = loadedIn(item.title);
+  const flagEl = h('div', {class: 'rd-flag', hidden: !loadedT.length});
+  const setFlag = (words) => { flagEl.hidden = !words.length; flagEl.replaceChildren(h('b', {text: 'Loaded wording found: '}), words.join(', '), '. These words carry opinion. Plainsight flags them the same way for every source and every side.'); };
+  setFlag(loadedT);
+  const sheet = h('div', {class: 'rd', role: 'dialog', 'aria-modal': 'true', 'aria-label': item.title},
+    h('div', {class: 'rd-bar'},
+      h('button', {class: 'rd-close', type: 'button', 'aria-label': 'Close reader', text: '← Back', onclick: closeReader}),
+      h('span', {class: 'rd-src', text: [item.source, item.date ? DATE(item.date) : ''].filter(Boolean).join(' · ')})),
+    h('div', {class: 'rd-scroll'}, h('article', {class: 'rd-doc'},
+      h('div', {class: 'rd-grade gr-' + gr.letter}, h('div', {class: 'rd-letter', text: gr.letter}),
+        h('div', null, h('div', {class: 'rd-gl', text: gr.label}), h('div', {class: 'rd-gw', text: gr.why}), h('div', {class: 'rd-scale', text: 'A primary record · B official account · C allegation or report · D unverified claim'}))),
+      flagEl,
+      item.kind ? h('div', {class: 'rd-kind'}, h('span', {class: 'chip', text: item.kind})) : null,
+      h('h1', {class: 'rd-title', text: item.title}),
+      item.detail ? h('p', {class: 'rd-detail', text: item.detail}) : null,
+      body,
+      item.link ? h('p', {class: 'rd-orig'}, 'Original: ', A(item.link, host(item.link) + ' ↗', 'rd-orig-a')) : null)));
+  readerEl = h('div', {class: 'rd-wrap', onclick: (e) => { if (e.target === readerEl) closeReader(); }}, sheet);
+  document.body.append(readerEl);
+  document.documentElement.classList.add('reading');
+  sheet.querySelector('.rd-close').focus();
+  const show = (blocks, note) => {
+    blocks = blocks.filter((b) => !/^\[\[Page \d+\]\]$|^\[Federal Register Volume|^\[Congressional Bills|From the U\.S\. Government Publishing Office\]?$|^<\/?DOC>$|^\[FR Doc/i.test(b.x.trim()));
+    body.replaceChildren(...(note ? [h('p', {class: 'rd-note', text: note})] : []), ...blocks.map((b) => h(b.t === 'h' ? 'h2' : b.t === 'li' ? 'p' : b.t === 'pre' ? 'pre' : 'p', {class: 'rd-' + b.t, text: (b.t === 'li' ? '• ' : '') + b.x})));
+    const words = loadedIn(item.title + ' ' + blocks.map((b) => b.x).join(' '));
+    setFlag(words);
+  };
+  if (structured) { show(structured); return; }
+  const texts = D.politics?.texts || {};
+  if (texts[item.link]?.length) { show(texts[item.link]); return; }
+  if (!item.link || !readable(item.link)) {
+    show(item.summary ? [{t: 'p', x: item.summary}] : [], `${item.source || 'This outlet'} owns the copyright to this article, so Plainsight shows the summary it publishes. Use the original link below to read the full story.`);
+    return;
+  }
+  if (/\.pdf($|\?)/i.test(item.link)) { show([], 'This document is a PDF. The summary above is the Court’s own; the full opinion is at the original link below.'); return; }
+  body.replaceChildren(h('div', {class: 'loading', text: 'Loading the document'}));
+  fetch('/reader?url=' + encodeURIComponent(item.link)).then((r) => r.ok ? r.json() : Promise.reject(new Error('HTTP ' + r.status))).then((d) => {
+    if (!readerEl) return;
+    if (d.blocks?.length) show(d.blocks); else throw new Error('empty');
+  }).catch(() => {
+    if (!readerEl) return;
+    const s = READS[item.link];
+    if (s?.length) show(s);
+    else show(item.summary ? [{t: 'p', x: item.summary}] : [], SNAPSHOT ? 'This preview only carries the text of a sample of documents. On the live site every government document opens here in full.' : 'The source did not answer just now. Try again, or use the original link below.');
+  });
+}
+// A title that opens the reader instead of leaving the site; long-press still offers the real link.
+function RA(item, type, cls, structured) {
+  const a = h('a', {href: safe(item.link) || '#', class: cls, text: item.title});
+  a.addEventListener('click', (e) => { if (e.metaKey || e.ctrlKey || e.shiftKey) return; e.preventDefault(); openReader(item, type, structured); });
+  return a;
+}
+
+const kevItem = (r) => ({title: `${r.cve} · ${r.vendor} ${r.product}`, link: 'https://nvd.nist.gov/vuln/detail/' + encodeURIComponent(r.cve), source: 'CISA KEV', date: r.added, kind: r.name});
+const kevBlocks = (r) => [{t: 'p', x: r.summary}, {t: 'h', x: 'Record'}, {t: 'li', x: `Added to KEV: ${DATE(r.added)}`}, {t: 'li', x: `Federal patch deadline: ${DATE(r.due)}`}, {t: 'li', x: `Known ransomware use: ${r.ransomware}`}, ...(r.cwe ? [{t: 'li', x: `Weakness: ${r.cwe}`}] : []), {t: 'li', x: `EPSS: ${EP(r.epss)} chance of exploitation in the next 30 days${r.percentile != null ? ` (higher than ${Math.round(r.percentile * 100)}% of all CVEs)` : ''}`}];
+const cveItem = (r) => ({title: `${r.cve} · ${r.vendor || ''} ${r.product || ''}`.trim(), link: 'https://nvd.nist.gov/vuln/detail/' + encodeURIComponent(r.cve), source: 'NIST NVD', date: r.published, kind: `CVSS ${r.score ?? '—'}`, status: r.status});
+const cveBlocks = (r) => [{t: 'p', x: r.summary}, {t: 'h', x: 'Record'}, {t: 'li', x: `Published: ${DATE(r.published)}`}, {t: 'li', x: `CVSS ${r.cvss}: ${r.score ?? '—'}`}, ...(r.vector ? [{t: 'li', x: `Vector: ${r.vector}`}] : []), {t: 'li', x: `NVD status: ${r.status}`}, {t: 'li', x: `In CISA KEV: ${r.in_kev || 'No'}`}, {t: 'li', x: `EPSS: ${EP(r.epss)}`}];
+/* ---------------- sports ---------------- */
+const teamColor = (() => { let m = null, src = null; return (abbr, league) => { if (src !== D.sports) { src = D.sports; m = new Map(); for (const g of D.sports?.rows || []) if (g.kind === 'match') for (const t of [g.home, g.away]) if (t.color) m.set(g.league + '|' + t.abbr, t.color); } return m.get(league + '|' + abbr) || ''; }; })();
+const isLight = (hex) => { const v = parseInt(hex.slice(1), 16); return ((v >> 16) * 299 + ((v >> 8) & 255) * 587 + (v & 255) * 114) / 1000 > 170; };
+function stateChip(g) {
+  if (g.state === 'in') return h('span', {class: 'live-chip', text: g.detail || 'Live'});
+  if (g.state === 'post') return h('span', {class: 'chip', text: g.detail || 'Final'});
+  const d = new Date(g.date);
+  return h('span', {class: 'chip', text: isNaN(d) ? g.detail : d.toLocaleString('en-US', {weekday: 'short', hour: 'numeric', minute: '2-digit'})});
+}
+function teamRow(t, g, otherScore) {
+  const sw = h('span', {class: 'tm-sw', style: t.color ? `background:${t.color}` : ''});
+  const lead = g.state !== 'pre' && t.score !== '' && otherScore !== '' && +t.score > +otherScore;
+  return h('div', {class: 'tm' + (t.winner || (g.state === 'post' && lead) ? ' tm-win' : '')}, sw,
+    h('span', {class: 'tm-ab', text: t.abbr}), h('span', {class: 'tm-nm', text: t.name}), h('span', {class: 'tm-rec', text: t.record}),
+    h('span', {class: 'tm-sc', text: g.state === 'pre' ? '' : t.score}));
+}
+function gameCard(g) {
+  const item = {title: g.name, link: g.link, source: 'ESPN · ' + g.league, date: g.date, kind: g.league};
+  if (g.kind === 'match') {
+    const blocks = [{t: 'p', x: `${g.away.name} ${g.state === 'pre' ? '' : g.away.score} at ${g.home.name} ${g.state === 'pre' ? '' : g.home.score}`.replace(/\s+/g, ' ')}, {t: 'li', x: 'Status: ' + g.detail}, ...(g.venue ? [{t: 'li', x: 'Venue: ' + g.venue}] : []), ...(g.tv ? [{t: 'li', x: 'TV: ' + g.tv}] : []), ...(g.note ? [{t: 'li', x: g.note}] : []), {t: 'li', x: `Records: ${g.away.abbr} ${g.away.record || '—'}, ${g.home.abbr} ${g.home.record || '—'}`}];
+    return h('article', {class: 'game' + (g.state === 'in' ? ' game-live' : ''), onclick: () => openReader(item, 'score', blocks), tabindex: 0, onkeydown: (e) => { if (e.key === 'Enter') openReader(item, 'score', blocks); }},
+      h('div', {class: 'game-h'}, h('span', {text: g.league}), stateChip(g)),
+      teamRow(g.away, g, g.home.score), teamRow(g.home, g, g.away.score),
+      g.note || g.tv ? h('div', {class: 'game-f', text: g.note || g.tv}) : null);
+  }
+  if (g.kind === 'card') {
+    return h('article', {class: 'game game-wide'}, h('div', {class: 'game-h'}, h('span', {text: g.league}), stateChip(g)), h('div', {class: 'game-t', text: g.name}),
+      h('div', {class: 'bouts'}, g.bouts.map((b) => h('div', {class: 'bout'}, h('span', {class: b.a.winner ? 'tm-win' : '', text: b.a.name}), h('span', {class: 'vs', text: 'vs'}), h('span', {class: b.b.winner ? 'tm-win' : '', text: b.b.name}), h('span', {class: 'bout-d', text: b.detail})))));
+  }
+  return h('article', {class: 'game game-wide'}, h('div', {class: 'game-h'}, h('span', {text: g.league + (g.session ? ' · ' + g.session : '')}), stateChip(g)), h('div', {class: 'game-t', text: g.name}),
+    h('ol', {class: 'field'}, g.leaders.map((t) => h('li', null, h('span', {class: 'pos', text: t.pos ?? ''}), h('span', {text: t.name}), h('span', {class: 'tm-sc', text: t.score || ''})))));
+}
+function standingsTable(t) {
+  const hasPts = t.rows.some((r) => r.pts !== '' && r.pct === '');
+  return h('div', {class: 'stand'}, h('div', {class: 'stand-h', text: t.group}),
+    h('div', {class: 'tbox tbox-flat'}, h('table', null,
+      h('thead', null, h('tr', null, ['#', 'Team', 'W', 'L', hasPts ? 'D/OT' : 'T/OT', hasPts ? 'Pts' : 'Pct', 'GB', 'Strk'].map((x, i) => h('th', {class: 'plain' + (i === 6 || i === 7 ? ' hide-sm' : ''), text: x})))),
+      h('tbody', null, t.rows.map((r, i) => { const c = r.color || teamColor(r.abbr, t.league); return h('tr', null,
+        h('td', {class: 'mut', text: i + 1}), h('td', null, h('span', {class: 'tm-sw sm', style: c ? `background:${c}` : ''}), ' ', r.team),
+        h('td', {text: r.w}), h('td', {text: r.l}), h('td', {text: r.t || '—'}), h('td', {text: hasPts ? r.pts : r.pct}), h('td', {class: 'hide-sm', text: r.gb || '—'}), h('td', {class: 'hide-sm', text: r.streak || '—'})); })))));
+}
+/* ---------------- section art (original line drawings, drawn on view) ---------------- */
+const ART = {
+  brief: 'M60 40m-34 0a34 34 0 1 0 68 0a34 34 0 1 0 -68 0M60 40m-22 0a22 22 0 1 0 44 0a22 22 0 1 0 -44 0M60 40m-10 0a10 10 0 1 0 20 0a10 10 0 1 0 -20 0M60 40L88 22M26 40H94M60 6V74M78 52l3 3M44 28l2 2',
+  president: 'M60 8l7 20h21l-17 12 6 20-17-12-17 12 6-20-17-12h21zM20 70H100M26 64H94M32 58H48M72 58H88',
+  congress: 'M30 50a30 26 0 0 1 60 0M54 24V14h12v10M60 14V6M26 50H94M32 50V68M44 50V68M56 50V68M64 50V68M76 50V68M88 50V68M22 68H98M18 74H102',
+  intel: 'M60 40m-6 0a6 8 0 1 0 12 0a6 8 0 1 0 -12 0M44 40a16 20 0 0 1 32 0c0 10-4 18-8 24M38 44a22 26 0 0 1 44-6M34 54c-2-6-2-12 0-18M82 46c0 12-4 22-10 28M52 72c4-6 6-14 6-22M60 4V16M60 64V76M14 40H30M90 40H106',
+  courts: 'M14 26L60 8l46 18zM20 26H100M28 30V62M44 30V62M76 30V62M92 30V62M60 30V62M20 62H100M14 68H106M8 74H112',
+  world: 'M60 40m-32 0a32 32 0 1 0 64 0a32 32 0 1 0 -64 0M28 40H92M60 8V72M60 8c-16 10-16 54 0 64M60 8c16 10 16 54 0 64M33 24H87M33 56H87',
+  sports: 'M12 10H108V70H12zM60 10V70M60 40m-12 0a12 12 0 1 0 24 0a12 12 0 1 0 -24 0M12 26H28V54H12M108 26H92V54H108M60 40h0',
+  exploited: 'M60 6L94 18V40c0 18-14 30-34 36C40 70 26 58 26 40V18zM62 14L52 34l12 6-10 22',
+  ransomware: 'M38 36V26a22 22 0 0 1 44 0v10M30 36H90V74H30zM60 50m-5 0a5 5 0 1 0 10 0a5 5 0 1 0 -10 0M60 55V64',
+  cves: 'M60 8L104 72H16zM60 30V50M60 58V62M36 72L60 34 84 72',
+  news: 'M16 14H86V70H16zM24 24H58M24 32H78M24 40H78M24 48H78M24 56H62M86 26c8 4 8 24 0 28M94 18c14 8 14 40 0 48',
+  sources: 'M24 20m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M96 18m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M60 40m-8 0a8 8 0 1 0 16 0a8 8 0 1 0 -16 0M28 66m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M94 64m-6 0a6 6 0 1 0 12 0a6 6 0 1 0 -12 0M29 23L53 36M91 21L67 36M33 63L53 45M89 61L67 45',
+};
+const HEADS = {
+  brief: ['The brief', 'What changed across government, security and sports, on one page.'],
+  president: ['The President', 'Every order, proclamation, memorandum and statement, from the official record.'],
+  congress: ['Congress', 'Votes, laws, bills, budget scores, hearings and research, as Congress records them.'],
+  intel: ['FBI & Intelligence', 'FBI and Justice cases, CIA publications, sanctions and the Ten Most Wanted.'],
+  courts: ['The Courts', 'Supreme Court opinions with the Court’s own summaries, and judiciary news.'],
+  world: ['World', 'The Pentagon and the United Nations, as each reports it.'],
+  sports: ['Sports', 'Live scores, standings and headlines across the major leagues.'],
+  exploited: ['Exploited flaws', 'Every vulnerability CISA has confirmed attackers are using.'],
+  ransomware: ['Ransomware', 'Who the gangs claim to have hit, from their own leak sites.'],
+  cves: ['Critical CVEs', 'Every 9.0+ vulnerability published in the last 30 days.'],
+  news: ['Security news', 'The security press, tagged and searchable.'],
+  sources: ['Sources & method', 'Where every item comes from, how it is graded, and what is left out.'],
+};
+function sectionHead(key) {
+  const ns = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(ns, 'svg');
+  svg.setAttribute('viewBox', '0 0 120 80'); svg.setAttribute('class', 'art'); svg.setAttribute('aria-hidden', 'true');
+  const p = document.createElementNS(ns, 'path');
+  p.setAttribute('d', ART[key] || ART.brief); p.setAttribute('pathLength', '1'); p.setAttribute('fill', 'none');
+  svg.append(p);
+  const [t, d] = HEADS[key] || [key, ''];
+  return h('header', {class: 'vhead'}, svg, h('div', {class: 'vhead-t'}, h('h2', {text: t}), h('p', {text: d})));
+}
+/* count-up for headline figures, once per view */
+function countUp(root) {
+  if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  root.querySelectorAll('.fig-v').forEach((el) => {
+    const txt = el.textContent, m = txt.match(/^[\d,]+$/); if (!m) return;
+    const end = +txt.replace(/,/g, ''); if (!end) return;
+    const t0 = performance.now(), dur = 700 + Math.min(600, end);
+    const step = (t) => { const k = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - k, 3); el.textContent = N(Math.round(end * e)); if (k < 1) requestAnimationFrame(step); else el.textContent = txt; };
+    requestAnimationFrame(step);
+  });
+}
+/* masthead signal field: original generative art */
+(function signal() {
+  const c = document.getElementById('sig'); if (!c) return;
+  const ctx = c.getContext('2d'); const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let W = 0, H = 0, dpr = 1, pts = [];
+  const seed = (i) => { const x = Math.sin(i * 127.1) * 43758.5453; return x - Math.floor(x); };
+  const size = () => { dpr = Math.min(2, devicePixelRatio || 1); W = c.clientWidth; H = c.clientHeight; c.width = W * dpr; c.height = H * dpr; ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    pts = []; const gap = 14; for (let y = gap / 2; y < H; y += gap) for (let x = gap / 2; x < W; x += gap) pts.push([x, y, seed(x * 7 + y)]); };
+  const frame = (t) => {
+    const css = getComputedStyle(document.documentElement);
+    const ink = css.getPropertyValue('--faint').trim(), acc = css.getPropertyValue('--bar').trim(), crit = css.getPropertyValue('--crit').trim();
+    ctx.clearRect(0, 0, W, H);
+    const cx = W * 0.62, cy = H * 0.55, ang = (t / 2600) % (Math.PI * 2);
+    for (const [x, y, s] of pts) {
+      const a = Math.atan2(y - cy, x - cx), d = Math.hypot(x - cx, y - cy);
+      let diff = (ang - a) % (Math.PI * 2); if (diff < 0) diff += Math.PI * 2;
+      const lit = Math.max(0, 1 - diff / 1.4);
+      const blip = s > 0.965;
+      ctx.globalAlpha = 0.34 + lit * 0.66;
+      ctx.fillStyle = blip && lit > 0.05 ? crit : lit > 0.25 ? acc : ink;
+      const r = blip ? 1.8 + lit * 2.6 : 1.1 + lit * 1.2;
+      ctx.beginPath(); ctx.arc(x, y, r, 0, 6.283); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    if (!reduce) requestAnimationFrame(frame);
+  };
+  size(); new ResizeObserver(() => { size(); if (reduce) frame(0); }).observe(c);
+  if (reduce) frame(0); else requestAnimationFrame(frame);
+})();
+/* live scores ticker */
+function ticker() {
+  const el = $('#ticker'); if (!el || !D.sports) return;
+  const gs = D.sports.rows.filter((g) => g.kind === 'match' && g.state !== 'pre').slice(0, 24);
+  const up = D.sports.rows.filter((g) => g.kind === 'match' && g.state === 'pre').slice(0, 8);
+  const items = [...gs, ...up]; if (!items.length) { el.hidden = true; return; }
+  const one = (g) => h('span', {class: 'tk' + (g.state === 'in' ? ' tk-live' : '')}, h('i', {text: g.league}), ` ${g.away.abbr} ${g.state === 'pre' ? '' : g.away.score}  ${g.home.abbr} ${g.state === 'pre' ? '' : g.home.score} `, h('em', {text: g.state === 'pre' ? new Date(g.date).toLocaleString('en-US', {weekday: 'short', hour: 'numeric', minute: '2-digit'}) : g.detail}));
+  const track = h('div', {class: 'tk-track'}, items.map(one), items.map(one));
+  track.style.setProperty('--tk-dur', Math.max(30, items.length * 4) + 's');
+  el.replaceChildren(track); el.hidden = false;
+}
+
+/* ---------------- views ---------------- */
+const VIEWS = {
+  brief() {
+    const ks = kevStats(), rs = ransomStats(), ov = overlap(), cv = D.cves?.rows, ks2 = kevSet(), pl = politics();
+    const fig = (k, v, s, crit) => h('div', {class: 'fig'}, h('div', {class: 'fig-k', text: k}), h('div', {class: 'fig-v' + (crit ? ' crit' : ''), text: v}), h('div', {class: 'fig-s'}, s));
+    const figs = h('div', {class: 'figs'},
+      fig('Exploited flaws · 30 days', ks ? N(ks.n30) : '—', ks ? [`${N(ks.r30)} tied to ransomware · CISA KEV`] : 'CISA KEV'),
+      fig('Ransomware victims · 7 days', rs ? N(rs.n7) : '—', rs ? [rs.chg == null ? '' : h('span', {class: 'delta ' + (rs.chg > 0 ? 'up' : 'down'), text: PCT(rs.chg)}), ' vs prior week'] : 'Leak-site posts', true),
+      fig('Critical CVEs · 30 days', cv ? N(cv.length) : '—', cv && ks2 ? `${N(cv.filter((r) => ks2.has(r.cve)).length)} already exploited · ${N(cv.filter((r) => r.score === 10).length)} scored 10.0` : 'NIST NVD, CVSS 9.0+'),
+      fig('Cyber × government', ov ? N(ov.length) : '—', 'Indictments, sanctions, rules and stories on state hacking'),
+    );
+    const patch = D.kev ? h('div', {class: 'list'}, D.kev.rows.slice(0, 7).map((r) => h('div', {class: 'it'},
+      h('div', null, RA({...kevItem(r), title: r.cve}, 'kev', 'cve', kevBlocks(r)), ' ', h('span', {text: `${r.vendor} ${r.product}`})),
+      h('div', {class: 'it-m'}, gradeDot(grade(r, 'kev')), h('span', {text: r.name.replace(`${r.vendor} ${r.product} `, '')}), r.ransomware === 'Known' ? h('span', {class: 'chip hot', text: 'Ransomware'}) : null, r.epss != null ? h('span', {class: 'chip', text: 'EPSS ' + EP(r.epss)}) : null),
+      h('div', {class: 'it-r'}, SHORT(r.added), h('br'), dueChip(r.due))))) : state('kev');
+    const ovl = ov ? h('div', {class: 'list'}, ov.slice(0, 8).map(newsItem)) : state('news');
+    const groups = rs ? ranked(countBy(rs.m, (r) => r.group, 8)) : state('ransomware');
+    const rec = pl ? h('div', {class: 'list'}, pl.filter((r) => r.branch === 'President' && r.source !== 'GovInfo').slice(0, 7).map((r) => recordItem(r))) : state('politics');
+    const laws = pl ? h('div', {class: 'list'}, pl.filter((r) => r.branch === 'Congress' && /Became law|Bill action/.test(r.kind)).slice(0, 7).map((r) => recordItem(r))) : state('politics');
+    const law = pl ? h('div', {class: 'list'}, pl.filter((r) => r.branch === 'Intel & Law' && (r.source !== 'Justice Department' || /National Security|Federal Bureau of Investigation|Criminal Division/.test(r.orgs || '') || CYBER.test(r.title))).slice(0, 7).map((r) => recordItem(r))) : state('politics');
+    const vts = D.votes ? (D.votes.rows.length ? h('div', {class: 'votes'}, D.votes.rows.slice(0, 4).map(voteCard)) : h('div', {class: 'empty', text: 'No recorded votes yet'})) : state('votes');
+    return [figs,
+      h('div', {class: 'grid'},
+        panel('Patch now', 'Newest flaws CISA confirms are exploited in the wild. Federal agencies must fix them by the due date.', patch, {more: ['#exploited', 'Full catalog →']}),
+        panel('Cyber × government', 'Government actions that touch cyber, and security stories about states, elections or law enforcement.', ovl, {more: ['#intel', 'FBI & Intel →']})),
+      h('div', {class: 'grid'},
+        panel('Ransomware victims posted per week', 'New victims on gang leak sites, Monday to Sunday. The last bar may be a partial week.', D.ransomware ? bars(weekly(), {unit: 'Victims posted', label: 'Ransomware victims per week'}) : state('ransomware'), {more: ['#ransomware', 'Ransomware →']}),
+        panel('Most active crews · 30 days', 'Victims posted per group in the latest 30 days.', groups)),
+      D.sports ? panel('Scores', 'Live and final games across the major leagues. Tap a game for details.', h('div', {class: 'games'}, D.sports.rows.filter((g) => g.kind === 'match' && g.state !== 'pre').slice(0, 8).map(gameCard)), {wide: true, more: ['#sports', 'Sports →']}) : null,
+      h('div', {class: 'grid'},
+        panel('The President', 'Orders, proclamations, statements and nominations, as published.', rec, {more: ['#president', 'President →']}),
+        panel('Latest roll-call votes', 'How each recorded vote went, with totals by party from the House Clerk.', vts, {more: ['#congress', 'All votes →']})),
+      h('div', {class: 'grid'},
+        panel('Congress', 'New laws and bills that just moved.', laws, {more: ['#congress', 'Congress →']}),
+        panel('FBI, intelligence & sanctions', 'FBI and national-security cases, CIA publications and Treasury sanctions.', law, {more: ['#intel', 'FBI & Intel →']})),
+    ];
+  },
+
+  exploited() {
+    if (!D.kev) return [state('kev')];
+    const rows = D.kev.rows, latest = maxOf(rows, 'added'), from = back(latest, 364);
+    const st = (TS.kevf ||= {f: 'all'});
+    const t = table('kev', rows, [
+      {key: 'cve', label: 'CVE', cls: 'nw', cell: (td, r) => td.append(gradeDot(grade(r, 'kev')), ' ', RA({...kevItem(r), title: r.cve}, 'kev', 'cve', kevBlocks(r)))},
+      {key: 'vendor', label: 'Vendor · product', cell: (td, r) => td.append(h('div', {text: r.vendor}), h('div', {class: 'fig-s', text: r.product}))},
+      {key: 'summary', label: 'What it is', sort: false, cls: 'sum hide-sm', cell: (td, r) => { td.textContent = r.summary; }},
+      {key: 'added', label: 'Added', date: true, cls: 'nw', cell: (td, r) => { td.textContent = DATE(r.added); }},
+      {key: 'due', label: 'Due', date: true, cls: 'nw hide-sm', cell: (td, r) => { td.append(h('div', {text: DATE(r.due)}), r.added >= back(latest, 60) ? dueChip(r.due) : null); }},
+      {key: 'ransomware', label: 'Ransomware', cls: 'nw', cell: (td, r) => td.append(r.ransomware === 'Known' ? h('span', {class: 'chip hot', text: 'Known'}) : h('span', {class: 'fig-s', text: 'Unknown'}))},
+      {key: 'epss', label: 'EPSS', num: true, cls: 'nw', cell: (td, r) => { td.textContent = EP(r.epss); if (r.epss >= 0.5) td.style.color = 'var(--crit)'; }},
+    ], {sort: 'added', placeholder: 'Search CVE, vendor, product, description, CWE', noun: 'flaws', search: ['cve', 'vendor', 'product', 'name', 'summary', 'cwe'],
+      filter: (r) => st.f === 'all' || (st.f === 'ransom' ? r.ransomware === 'Known' : st.f === 'epss' ? r.epss >= 0.1 : r.added >= from),
+      extra: seg([['all', 'All'], ['year', 'Last 12 months'], ['ransom', 'Ransomware'], ['epss', 'EPSS ≥ 10%']], st.f, (v) => { st.f = v; render(); })});
+    return [
+      h('div', {class: 'grid'},
+        panel('Exploited flaws added per month', 'CISA KEV additions over the latest 24 months. Red marks flaws CISA ties to ransomware campaigns; that flag is often added weeks later.',
+          [bars(kevMonthly(), {sub: true, unit: 'Added', subUnit: 'Known ransomware use', height: 230, label: 'KEV additions per month'}),
+            h('div', {class: 'legend'}, h('span', null, h('i', {class: 'sw', style: 'background:var(--bar)'}), 'All additions'), h('span', null, h('i', {class: 'sw', style: 'background:var(--crit)'}), 'Known ransomware use'))]),
+        panel('Most-exploited vendors · 12 months', 'KEV additions per vendor in the latest 365 days.', ranked(countBy(rows.filter((r) => r.added >= from), (r) => r.vendor, 12)))),
+      panel(`Known Exploited Vulnerabilities · ${N(rows.length)} entries`, 'Every flaw CISA has confirmed exploited in the wild, with today’s EPSS: FIRST’s estimate of the chance it is exploited in the next 30 days.', t, {wide: true}),
+    ];
+  },
+
+  ransomware() {
+    if (!D.ransomware) return [state('ransomware')];
+    const rs = ransomStats(), rows = D.ransomware.rows;
+    const fig = (k, v, s, crit) => h('div', {class: 'fig'}, h('div', {class: 'fig-k', text: k}), h('div', {class: 'fig-v' + (crit ? ' crit' : ''), text: v}), h('div', {class: 'fig-s'}, s));
+    return [
+      h('div', {class: 'figs'},
+        fig('Victims posted · 7 days', N(rs.n7), [rs.chg == null ? '' : h('span', {class: 'delta ' + (rs.chg > 0 ? 'up' : 'down'), text: PCT(rs.chg)}), ' vs prior week'], true),
+        fig('Active crews · 7 days', N(rs.groups7), 'Distinct groups posting'),
+        fig('Victims posted · 30 days', N(rs.n30), 'Through ' + DATE(rs.latest)),
+        fig('U.S. victims · 30 days', N(rs.us30), 'Where the post names a country')),
+      panel('Victims posted per week · 6 months', 'Each bar is one Monday-to-Sunday week of new leak-site posts.', bars(weekly(), {unit: 'Victims posted', height: 240, label: 'Ransomware victims per week'}), {wide: true}),
+      h('div', {class: 'grid'},
+        panel('Crews · 30 days', null, ranked(countBy(rs.m, (r) => r.group, 12))),
+        panel('Sectors · 30 days', 'Where the post names one.', ranked(countBy(rs.m, (r) => r.sector, 12))),
+        panel('Countries · 30 days', 'Victim’s country, where named.', ranked(countBy(rs.m, (r) => r.country, 12), regionName))),
+      panel(`Every victim posted · ${N(rows.length)} in 6 months`, 'These are the criminals’ own claims from their leak sites, not confirmed breaches.', table('ransom', rows, [
+        {key: 'victim', label: 'Victim', cell: (td, r) => { td.append(h('div', null, gradeDot(grade(r, 'ransom')), ' ', r.victim)); if (r.domain && r.domain.toLowerCase() !== r.victim.toLowerCase()) td.append(h('div', {class: 'fig-s', text: r.domain})); }},
+        {key: 'group', label: 'Group', cls: 'nw', cell: (td, r) => { td.textContent = r.group; }},
+        {key: 'sector', label: 'Sector', cls: 'hide-sm', cell: (td, r) => { td.textContent = r.sector || '—'; }},
+        {key: 'country', label: 'Country', cls: 'nw', cell: (td, r) => { td.textContent = r.country ? regionName(r.country) : '—'; }},
+        {key: 'attacked', label: 'Attacked', date: true, cls: 'nw hide-sm', cell: (td, r) => { td.textContent = DATE(r.attacked); }},
+        {key: 'posted', label: 'Posted', date: true, cls: 'nw', cell: (td, r) => { td.textContent = DATE(r.posted); }},
+      ], {sort: 'posted', placeholder: 'Search company, group, sector, country code, domain', noun: 'victims', search: ['victim', 'group', 'sector', 'country', 'domain']}), {wide: true}),
+    ];
+  },
+
+  cves() {
+    if (!D.cves) return [state('cves')];
+    const ks = kevSet() || new Set();
+    const rows = D.cves.rows.map((r) => ({...r, in_kev: ks.has(r.cve) ? 'Yes' : 'No'}));
+    const fig = (k, v, s, crit) => h('div', {class: 'fig'}, h('div', {class: 'fig-k', text: k}), h('div', {class: 'fig-v' + (crit ? ' crit' : ''), text: v}), h('div', {class: 'fig-s'}, s));
+    return [
+      h('div', {class: 'figs'},
+        fig('Critical CVEs · 30 days', N(rows.length), 'CVSS 9.0 or higher, NIST NVD'),
+        fig('Already exploited', N(rows.filter((r) => r.in_kev === 'Yes').length), 'Also in CISA KEV', true),
+        fig('Perfect 10.0', N(rows.filter((r) => r.score === 10).length), 'Remote, no auth, full impact'),
+        fig('Awaiting analysis', N(rows.filter((r) => /awaiting|received|undergoing/i.test(r.status)).length), 'Not yet reviewed by NVD')),
+      panel('Critical CVEs published in the latest 30 days', 'Joined to CISA KEV and FIRST EPSS. Scores come from the reporting CNA where NVD has not scored it yet.', table('cves', rows, [
+        {key: 'cve', label: 'CVE', cls: 'nw', cell: (td, r) => td.append(gradeDot(grade(r, 'cve')), ' ', RA({...cveItem(r), title: r.cve}, 'cve', 'cve', cveBlocks(r)))},
+        {key: 'score', label: 'CVSS', num: true, cls: 'nw', cell: (td, r) => td.append(h('span', {class: 'score' + (r.score === 10 ? ' max' : ''), title: r.vector}, r.score == null ? '—' : r.score.toFixed(1), h('i', null, h('b', {style: `width:${(r.score || 0) * 10}%`}))))},
+        {key: 'vendor', label: 'Vendor · product', cell: (td, r) => td.append(h('div', {text: r.vendor || '—'}), h('div', {class: 'fig-s', text: r.product}))},
+        {key: 'summary', label: 'What it is', sort: false, cls: 'sum hide-sm', cell: (td, r) => { td.textContent = r.summary; }},
+        {key: 'published', label: 'Published', date: true, cls: 'nw', cell: (td, r) => { td.textContent = DATE(r.published); }},
+        {key: 'in_kev', label: 'Exploited', cls: 'nw', cell: (td, r) => td.append(r.in_kev === 'Yes' ? h('span', {class: 'chip hot', text: 'In KEV'}) : h('span', {class: 'fig-s', text: 'No'}))},
+        {key: 'epss', label: 'EPSS', num: true, cls: 'nw hide-sm', cell: (td, r) => { td.textContent = EP(r.epss); }},
+      ], {sort: 'published', placeholder: 'Search CVE, vendor, product, description', noun: 'CVEs', search: ['cve', 'vendor', 'product', 'summary']}), {wide: true}),
+    ];
+  },
+
+  news() {
+    const nw = news(); if (!nw) return [state('news')];
+    const st = (TS.newsf ||= {f: 'all', src: '', q: ''});
+    const sources = [...new Set(nw.map((r) => r.source))].sort();
+    const search = h('input', {class: 'search', type: 'search', id: 'q-news', placeholder: 'Search every headline', 'aria-label': 'Search headlines', value: st.q});
+    const sel = h('select', {class: 'sel', id: 'src-news', 'aria-label': 'Outlet'}, h('option', {value: '', text: 'All outlets'}), sources.map((x) => h('option', {value: x, text: x})));
+    sel.value = st.src;
+    const listEl = h('div', {class: 'list'}), countEl = h('span', {class: 'count'});
+    const fill = () => {
+      let l = nw.filter((r) => (st.f === 'all' || r.tags.includes(st.f)) && (!st.src || r.source === st.src));
+      if (st.q) { const q = st.q.toLowerCase(); l = l.filter((r) => (r.title + ' ' + r.source + ' ' + r.tags.join(' ')).toLowerCase().includes(q)); }
+      listEl.replaceChildren(...(l.length ? l.slice(0, 400).map(newsItem) : [h('div', {class: 'empty', text: 'Nothing matches'})]));
+      countEl.textContent = N(l.length) + ' headlines';
+    };
+    let t; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { st.q = search.value.trim(); fill(); }, 120); });
+    sel.addEventListener('change', () => { st.src = sel.value; fill(); });
+    fill();
+    const cnt = (tg) => N(nw.filter((r) => r.tags.includes(tg)).length);
+    return [
+      h('div', {class: 'tools'}, seg([['all', `All ${N(nw.length)}`], ['Nation-state', `Nation-state ${cnt('Nation-state')}`], ['Ransomware', `Ransomware ${cnt('Ransomware')}`], ['Breach', `Breaches ${cnt('Breach')}`], ['Exploited flaw', `Flaws ${cnt('Exploited flaw')}`], ['Law & sanctions', `Law ${cnt('Law & sanctions')}`]], st.f, (v) => { st.f = v; render(); }), sel, search, countEl),
+      panel('Security press', 'The last 14 days from The Record, BleepingComputer, The Hacker News, Krebs on Security, SecurityWeek, Dark Reading and the UK’s NCSC. Tags come from keywords in the headline.', listEl, {wide: true}),
+    ];
+  },
+
+  president() {
+    const pl = politics(); if (!pl) return [state('politics')];
+    const since = (d) => isoDay(Date.now() - d * 864e5);
+    const P = pl.filter((r) => r.branch === 'President');
+    const docs = P.filter((r) => r.source === 'Federal Register' || (r.source === 'White House' && /order|proclamation|memorand|determination|notice|nomination|presidential action/i.test(r.kind)));
+    const words = P.filter((r) => r.source === 'White House' && !docs.includes(r));
+    const eo = P.filter((r) => /^Executive order/i.test(r.kind));
+    return [
+      h('div', {class: 'figs'},
+        bigfig('Executive orders · 90 days', N(eo.filter((r) => r.date >= since(90)).length), eo[0] ? `Latest: ${eo[0].kind.replace('Executive order', 'EO')}, ${DATE(eo[0].date)}` : 'Federal Register'),
+        bigfig('Proclamations · 90 days', N(P.filter((r) => /proclamation/i.test(r.kind) && r.source === 'Federal Register' && r.date >= since(90)).length), 'As published in the Federal Register'),
+        bigfig('Presidential documents · 30 days', N(P.filter((r) => r.source === 'GovInfo' && r.date >= since(30)).length), 'Daily Compilation, every statement and remark'),
+        bigfig('White House releases · 21 days', N(words.length), 'News, statements, fact sheets, remarks')),
+      h('div', {class: 'grid'},
+        recordPanel('pres-docs', 'Orders, proclamations & memoranda', 'Signed presidential documents as published in the Federal Register and by the White House.', docs, {limit: 12}),
+        recordPanel('pres-wh', 'White House releases', 'Statements, fact sheets, briefings, remarks and nominations. These are the administration’s own words and headlines, shown unedited.', words, {limit: 12})),
+      h('div', {class: 'grid'},
+        recordPanel('pres-dcpd', 'Daily Compilation of Presidential Documents', 'The official record of everything the President says and signs, compiled by the Office of the Federal Register.', P.filter((r) => r.source === 'GovInfo'), {limit: 10}),
+        recordPanel('pres-rules', 'Executive branch rules', 'Significant final and proposed rules from every agency, plus anything touching cybersecurity.', pl.filter((r) => r.branch === 'Agencies'), {limit: 10})),
+    ];
+  },
+
+  congress() {
+    const pl = politics();
+    const since = (d) => isoDay(Date.now() - d * 864e5);
+    const vt = D.votes?.rows || [];
+    const C = pl ? pl.filter((r) => r.branch === 'Congress') : [];
+    const by = (k) => C.filter((r) => r.kind === k);
+    const st = (TS.congv ||= {n: 6});
+    const votesBox = D.votes ? (vt.length ? h('div', {class: 'votes'}, vt.slice(0, st.n).map(voteCard)) : h('div', {class: 'empty', text: 'No recorded votes yet'})) : state('votes');
+    const more = vt.length > st.n ? h('button', {class: 'morebtn', type: 'button', text: `Show all ${N(vt.length)} votes`, onclick: () => { st.n = 1e3; render(); }}) : null;
+    return [
+      h('div', {class: 'figs'},
+        bigfig('Became law · 120 days', pl ? N(by('Became law').length) : '—', by('Became law')[0] ? 'Latest: ' + ((by('Became law')[0].title.match(/Public Law (\d+) - (\d+)/) || []).slice(1).join('-').replace(/^(.+)$/, 'P.L. $1') || by('Became law')[0].title.slice(0, 40)) : 'Public laws, GovInfo'),
+        bigfig('Roll-call votes · 30 days', D.votes ? N(vt.filter((r) => r.date >= since(30)).length) : '—', vt[0] ? `Latest: ${vt[0].chamber} roll ${vt[0].roll}, ${DATE(vt[0].date)}` : 'House and Senate'),
+        bigfig('Bills with action · 7 days', pl ? N(by('Bill action').filter((r) => r.date >= since(7)).length) : '—', 'Latest action recorded on Congress.gov'),
+        bigfig('Hearings published · 60 days', pl ? N(by('Hearing').length) : '—', 'Transcripts released by committees')),
+      panel('Roll-call votes', 'Every recorded floor vote, newest first. Party totals are the clerks’ own counts.', [votesBox, more], {wide: true}),
+      pl ? h('div', {class: 'grid'},
+        recordPanel('cg-law', 'Became law', 'Public laws, newest first, linked to the enrolled text.', by('Became law'), {limit: 10}),
+        recordPanel('cg-act', 'Bills on the move', 'Bills with a new action: introductions, committee votes, passage, signatures.', by('Bill action'), {limit: 10})) : state('politics'),
+      pl ? h('div', {class: 'grid'},
+        recordPanel('cg-cbo', 'Cost estimates & budget', 'Congressional Budget Office cost estimates and reports, the nonpartisan scorekeeper.', C.filter((r) => r.source === 'CBO'), {limit: 8}),
+        recordPanel('cg-hear', 'Hearings', 'Committee hearing transcripts as published.', by('Hearing'), {limit: 8})) : null,
+      pl ? h('div', {class: 'grid'},
+        recordPanel('cg-res', 'Research & oversight', 'Congressional Research Service and Government Accountability Office reports, both nonpartisan.', C.filter((r) => r.source === 'CRS' || r.source === 'GAO'), {limit: 8}),
+        recordPanel('cg-text', 'New bill texts & the Congressional Record', 'Newly printed bill versions and daily issues of the Congressional Record.', C.filter((r) => r.kind === 'Bill text' || r.kind === 'Congressional Record'), {limit: 8})) : null,
+    ];
+  },
+
+  intel() {
+    const pl = politics(); if (!pl) return [state('politics')];
+    const since = (d) => isoDay(Date.now() - d * 864e5);
+    const L = pl.filter((r) => r.branch === 'Intel & Law');
+    const fbi = L.filter((r) => r.source === 'FBI' || /Federal Bureau of Investigation/.test(r.orgs || ''));
+    const doj = L.filter((r) => r.source === 'Justice Department');
+    const nsd = doj.filter((r) => /National Security|Criminal Division|Computer Crime|Counterintelligence/i.test((r.orgs || '') + ' ' + r.kind) || CYBER.test(r.title));
+    const sanc = L.filter((r) => r.source === 'Treasury OFAC');
+    const wanted = D.politics?.wanted || [];
+    return [
+      h('div', {class: 'figs'},
+        bigfig('FBI cases & releases', N(fbi.length), 'FBI releases and Justice cases the FBI worked'),
+        bigfig('National security & cyber cases', N(nsd.length), 'Justice cases on espionage, cyber and sanctions evasion'),
+        bigfig('Sanctions actions · 30 days', N(sanc.filter((r) => r.date >= since(30)).length), sanc[0] ? `Latest: ${sanc[0].title.split(';')[0]}` : 'Treasury OFAC'),
+        bigfig('Justice releases', N(doj.length), 'Newest press releases, all components')),
+      h('div', {class: 'grid'},
+        recordPanel('in-fbi', 'FBI', 'FBI announcements, and Justice Department cases the FBI investigated.', fbi, {limit: 10}),
+        recordPanel('in-nsd', 'National security & cyber cases', 'Espionage, hacking, export-control and sanctions cases from the Justice Department.', nsd, {limit: 10})),
+      h('div', {class: 'grid'},
+        recordPanel('in-ofac', 'Sanctions', 'Every Treasury OFAC action: designations, delistings and licenses, by program.', sanc, {limit: 10}),
+        recordPanel('in-cia', 'CIA', 'What the Central Intelligence Agency has published.', L.filter((r) => r.source === 'CIA'), {limit: 8, nodate: true})),
+      wanted.length ? panel('FBI Ten Most Wanted', 'As the FBI publishes the list, with the charges and the reward offered. Report tips at tips.fbi.gov.', h('div', {class: 'list'}, wanted.map((w) => h('div', {class: 'it'},
+        RA({title: w.name, link: w.link, source: 'FBI', date: w.published, kind: 'Ten Most Wanted'}, 'wanted', 'it-t', [{t: 'p', x: w.charges}, ...(w.reward ? [{t: 'p', x: w.reward}] : []), ...(w.caution ? [{t: 'p', x: w.caution}] : []), ...(w.office ? [{t: 'li', x: 'Field office: ' + w.office}] : []), {t: 'p', x: 'Report tips at tips.fbi.gov or 1-800-CALL-FBI.'}]), h('div', {class: 'it-m'}, gradeDot(grade(w, 'wanted')), h('span', {text: w.charges}), w.caution ? h('span', {class: 'chip hot', text: w.caution}) : null),
+        h('div', {class: 'it-r', text: w.office || ''}), w.reward ? h('div', {class: 'rec-x', text: w.reward}) : null))), {wide: true}) : null,
+      recordPanel('in-doj', 'Justice Department: every release', 'All components, including U.S. Attorneys’ offices nationwide.', doj, {limit: 12, wide: true}),
+    ];
+  },
+
+  courts() {
+    const pl = politics(); if (!pl) return [state('politics')];
+    const sc = pl.filter((r) => r.source === 'Supreme Court');
+    return [
+      h('div', {class: 'figs'},
+        bigfig('Supreme Court opinions', N(sc.length), 'This term and last'),
+        bigfig('Per curiam decisions', N(sc.filter((r) => /Per curiam/.test(r.detail)).length), 'Unsigned, for the whole Court'),
+        bigfig('Latest opinion', sc[0] ? SHORT(sc[0].date) : '—', sc[0] ? sc[0].title : '')),
+      recordPanel('ct-sc', 'Supreme Court opinions', 'Each opinion with its docket, author and the Court’s own summary of the holding, linked to the full PDF.', sc, {limit: 15, wide: true}),
+      recordPanel('ct-us', 'Federal judiciary news', 'From the Administrative Office of the U.S. Courts.', pl.filter((r) => r.source === 'U.S. Courts'), {limit: 8, wide: true}),
+    ];
+  },
+
+  world() {
+    const pl = politics(); if (!pl) return [state('politics')];
+    return [h('div', {class: 'grid'},
+      recordPanel('wd-dod', 'Defense Department', 'Releases from the Pentagon: operations, contracts, personnel and statements.', pl.filter((r) => r.source === 'Defense Department'), {limit: 12}),
+      recordPanel('wd-un', 'United Nations', 'UN News coverage of the Security Council, conflicts and humanitarian crises.', pl.filter((r) => r.source === 'United Nations'), {limit: 12}))];
+  },
+
+  sports() {
+    const sp = D.sports; if (!sp) return [sectionHead('sports'), state('sports')];
+    const st = (TS.sportf ||= {lg: '', table: ''});
+    const games = sp.rows.filter((g) => !st.lg || g.league === st.lg);
+    const live = sp.rows.filter((g) => g.state === 'in').length;
+    const lgs = sp.leagues.filter((l) => sp.rows.some((g) => g.league === l) || sp.news.some((n) => n.league === l));
+    const tablesFor = sp.tables.filter((t) => (st.lg ? t.league === st.lg : t.league === (st.table || sp.tables[0]?.league)));
+    const tlgs = [...new Set(sp.tables.map((t) => t.league))];
+    return [
+      sectionHead('sports'),
+      h('div', {class: 'figs'},
+        bigfig('Live now', N(live), live ? 'Games in progress' : 'Nothing in progress'),
+        bigfig('Finals', N(sp.rows.filter((g) => g.state === 'post').length), 'On the current slate of each league'),
+        bigfig('Coming up', N(sp.rows.filter((g) => g.state === 'pre').length), 'Scheduled on current slates'),
+        bigfig('Headlines', N(sp.news.length), 'Latest across leagues')),
+      h('div', {class: 'tools'}, seg([['', 'All'], ...lgs.map((l) => [l, l])], st.lg, (v) => { st.lg = v; render(); })),
+      panel(st.lg ? `${st.lg} scores` : 'Scores', 'Live games first, then finals, then what’s next. Tap a game for details.', games.length ? h('div', {class: 'games'}, games.slice(0, 60).map(gameCard)) : h('div', {class: 'empty', text: 'No games on the current slate'}), {wide: true}),
+      tablesFor.length || !st.lg ? panel('Standings', st.lg ? null : 'Pick a league.', [!st.lg ? h('div', {class: 'tools'}, seg(tlgs.map((l) => [l, l]), st.table || tlgs[0], (v) => { st.table = v; render(); })) : null, h('div', {class: 'stands'}, tablesFor.map(standingsTable))], {wide: true}) : null,
+      recordPanel('sp-news', 'Headlines', 'From ESPN. Articles open as their published summary; the full story stays at ESPN.', sp.news.filter((n) => !st.lg || n.league === st.lg).map((n) => ({...n, date: n.published, kind: n.league, _t: 'news'})), {limit: 12, wide: true, type: 'news'}),
+    ];
+  },
+
+  sources() {
+    const status = SETS.flatMap((s) => D[s]?.status || []);
+    const genAt = SETS.map((s) => D[s]?.generated).filter(Boolean).sort().pop();
+    const health = status.length ? table('feeds', status, [
+      {key: 'feed', label: 'Source', cell: (td, r) => td.append(A(r.url, r.feed, 'it-t'))},
+      {key: 'ok', label: 'Status', cls: 'nw', cell: (td, r) => td.append(h('span', {class: 'chip ' + (r.ok ? 'acc' : 'hot'), text: r.ok ? 'OK' : 'Failed'}))},
+      {key: 'items', label: 'Items', num: true, cls: 'nw', cell: (td, r) => { td.textContent = N(r.items); }},
+      {key: 'checked', label: 'Pulled', date: true, cls: 'nw mut', cell: (td, r) => { td.textContent = AGO(r.checked); td.title = r.checked; }},
+      {key: 'note', label: 'Note', sort: false, cls: 'hide-sm mut', cell: (td, r) => { td.textContent = r.note || ''; }},
+    ], {sort: null, placeholder: 'Search sources', noun: 'sources', search: ['feed', 'url', 'note']}) : state('kev');
+    const dl = (pairs) => h('dl', null, pairs.flatMap(([t, d]) => [h('dt', {text: t}), h('dd', {text: d})]));
+    return [
+      panel('Source health', genAt ? `Every public source behind this site and how its last pull went. Data pulled ${AGO(genAt)}.` : null, health, {wide: true}),
+      panel('Method', null, h('div', {class: 'method'}, dl([
+        ['Exploited flaws', 'CISA’s Known Exploited Vulnerabilities catalog, the U.S. government’s list of flaws confirmed exploited in the wild. Due dates come from Binding Operational Directive deadlines for federal agencies.'],
+        ['EPSS', 'FIRST’s Exploit Prediction Scoring System: the daily probability that a CVE is exploited in the next 30 days, and its percentile among all CVEs.'],
+        ['Critical CVEs', 'NIST National Vulnerability Database entries published in the latest 30 days with a CVSS v3 severity of Critical.'],
+        ['Ransomware', 'Victims posted on gang leak sites, collected by ransomware.live. These are attackers’ claims, not confirmed breaches. Leak-site links are not shown.'],
+        ['Security news', 'Headlines from specialist security outlets, read from their public RSS feeds. Each links to the original story.'],
+        ['Politics', 'Primary records only, never partisan outlets: House and Senate roll-call votes; public laws, bill actions, bill texts, hearings and the Congressional Record from Congress.gov and GovInfo; CBO cost estimates; CRS and GAO reports; White House releases and the Daily Compilation of Presidential Documents; executive orders, proclamations and significant rules from the Federal Register; Supreme Court opinions; FBI, CIA and Justice Department releases and the FBI’s Ten Most Wanted; Treasury sanctions actions; Defense Department releases; and UN News for world events.'],
+        ['Sports', 'Scores, schedules, standings and headlines from ESPN’s public site data. Scores and standings grade A as official results; headlines grade C as press reports and open as their summary.'],
+        ['Art', 'Section drawings and the masthead signal field are original artwork made for this site.'],
+        ['Grades', 'Every item carries an evidence grade, set by fixed rules for what kind of record it is, never by what it says or who it favors. A: a primary record or confirmed fact (laws, signed orders, court rulings, roll-call tallies, CISA-confirmed exploits, convictions). B: an official account or nonpartisan analysis (agency and White House statements; CBO, CRS and GAO). C: an allegation or secondary report (criminal charges, press reports). D: an unverified claim (ransomware gangs’ leak-site posts). A separate flag marks loaded or promotional words, using one word list for every source and side. A grade rates the evidence behind an item, not whether a policy is good.'],
+        ['Reader', 'Official U.S. government documents open inside Plainsight in full, because they are public domain. Press articles are copyrighted, so the reader shows the outlet’s own summary and links to the original.'],
+        ['Neutrality', 'Political items are shown as the government published them: the official title, date and document. Vote totals by party are the clerks’ own counts. Nothing is ranked, summarized or labeled by viewpoint.'],
+        ['Freshness', 'Every visit pulls from the sources, with results cached for up to 30 minutes so the sources are not hammered.'],
+        ['Left out', 'Paywalled threat-intel feeds, dark-web content itself, and anything about private individuals.'],
+      ])), {wide: true}),
+    ];
+  },
+};
+function newsItem(r) {
+  const ty = r._t || 'news';
+  return h('div', {class: 'it'}, RA(r, ty, 'it-t'), h('div', {class: 'it-m'}, gradeBadge(grade(r, ty), loadedIn(r.title)), h('span', {text: r.source}), ...tagChips(r.tags)), h('div', {class: 'it-r', title: r.date || r.published, text: (r.date || r.published).length === 10 ? SHORT(r.date) : AGO(r.date || r.published)}));
+}
+function bigfig(k, v, s2) { return h('div', {class: 'fig'}, h('div', {class: 'fig-k', text: k}), h('div', {class: 'fig-v', text: v}), h('div', {class: 'fig-s'}, s2)); }
+const RP = {};
+function recordPanel(id, title, note, rows, o = {}) {
+  const st = (RP[id] ||= {q: '', limit: o.limit || 10});
+  const listEl = h('div', {class: 'list'}), countEl = h('span', {class: 'count'});
+  const search = rows.length > 8 ? h('input', {class: 'search', type: 'search', id: 'q-' + id, placeholder: 'Search ' + title.toLowerCase(), 'aria-label': 'Search ' + title, value: st.q}) : null;
+  const more = h('button', {class: 'morebtn', type: 'button', hidden: true});
+  const fill = () => {
+    let l = rows;
+    if (st.q) { const q = st.q.toLowerCase(); l = l.filter((r) => (r.title + ' ' + r.kind + ' ' + r.source + ' ' + (r.detail || '') + ' ' + (r.orgs || '')).toLowerCase().includes(q)); }
+    listEl.replaceChildren(...(l.length ? l.slice(0, st.limit).map((r) => recordItem(r, o)) : [h('div', {class: 'empty', text: rows.length ? 'Nothing matches' : 'Nothing published in this window'})]));
+    countEl.textContent = N(l.length);
+    more.hidden = l.length <= st.limit; more.textContent = `Show ${N(Math.min(25, l.length - st.limit))} more`;
+  };
+  more.addEventListener('click', () => { st.limit += 25; fill(); });
+  if (search) { let t; search.addEventListener('input', () => { clearTimeout(t); t = setTimeout(() => { st.q = search.value.trim(); fill(); }, 120); }); }
+  fill();
+  return panel(title, note, [search ? h('div', {class: 'tools'}, search, countEl) : null, listEl, more], {wide: o.wide});
+}
+function recordItem(r, o = {}) {
+  const ty = o.type || r._t || 'record';
+  const d = (r.date || '').slice(0, 10);
+  return h('div', {class: 'rec'},
+    h('div', {class: 'rec-d'}, h('span', {class: 'rec-day', text: d ? SHORT(d) : '—'}), h('span', {class: 'rec-br', text: d ? d.slice(0, 4) : r.source})),
+    h('div', {class: 'rec-b'},
+      h('div', {class: 'rec-k'}, gradeBadge(grade(r, ty), loadedIn(r.title)), h('span', {class: 'chip' + (r.cyber ? ' acc' : ''), text: r.kind}), h('span', {text: r.source})),
+      RA(r, ty, 'it-t'),
+      r.detail ? h('div', {class: 'rec-x', text: r.detail}) : null));
+}
+function voteCard(v) {
+  const passed = /pass|agreed|confirmed|adopted/i.test(v.result);
+  const total = (v.yea || 0) + (v.nay || 0) + (v.present || 0) + (v.nv || 0) || 1;
+  const seg2 = (n, cls) => (n ? h('i', {class: 'vb-' + cls, style: `width:${(n / total) * 100}%`}) : null);
+  return h('article', {class: 'vote'},
+    h('div', {class: 'vote-h'}, h('span', {text: `${v.chamber} · Roll ${v.roll} · ${DATE(v.date)}`}), h('span', {class: 'chip' + (passed ? ' acc' : ''), text: v.result || '—'})),
+    h('div', {class: 'vote-t'}, v.measure ? h('span', {class: 'vote-m', text: v.measure}) : null, RA({title: v.title || v.question, link: v.link, source: `${v.chamber} roll call ${v.roll}`, date: v.date, kind: v.measure || 'Roll-call vote'}, 'vote', 'it-t', [
+      {t: 'p', x: `Question: ${v.question}`}, {t: 'p', x: `Result: ${v.result}`},
+      {t: 'h', x: 'Tally'}, {t: 'li', x: `Yea ${N(v.yea)}`}, {t: 'li', x: `Nay ${N(v.nay)}`}, ...(v.present ? [{t: 'li', x: `Present ${N(v.present)}`}] : []), ...(v.nv ? [{t: 'li', x: `Not voting ${N(v.nv)}`}] : []),
+      ...(v.parties?.length ? [{t: 'h', x: 'By party'}, ...v.parties.map((p) => ({t: 'li', x: `${p.party}: ${N(p.yea)} yea, ${N(p.nay)} nay${p.present ? `, ${N(p.present)} present` : ''}${p.nv ? `, ${N(p.nv)} not voting` : ''}`}))] : []),
+    ])),
+    gradeBadge(grade(v, 'vote')),
+    h('div', {class: 'vote-q', text: v.question}),
+    h('div', {class: 'vbar', role: 'img', 'aria-label': `Yea ${v.yea}, Nay ${v.nay}`}, seg2(v.yea, 'y'), seg2(v.nay, 'n'), seg2(v.present, 'p'), seg2(v.nv, 'x')),
+    h('div', {class: 'vote-n'}, h('span', null, h('b', {text: N(v.yea)}), ' yea'), h('span', null, h('b', {text: N(v.nay)}), ' nay'), v.present ? h('span', {text: `${N(v.present)} present`}) : null, v.nv ? h('span', {text: `${N(v.nv)} not voting`}) : null),
+    v.parties?.length ? h('div', {class: 'vote-p'}, v.parties.map((p) => h('span', {text: `${p.party} ${N(p.yea)}–${N(p.nay)}`}))) : null);
+}
+/* ---------------- shell ---------------- */
+const ROUTES = Object.keys(VIEWS);
+let current = ROUTES.includes(location.hash.slice(1)) ? location.hash.slice(1) : 'brief';
+function render() {
+  const main = $('#main');
+  const y = window.scrollY;
+  const same = main.dataset.view === current;
+  const parts = VIEWS[current]();
+  main.replaceChildren(h('div', {class: 'view'}, parts[0]?.classList?.contains('vhead') ? null : sectionHead(current), parts));
+  if (!same) countUp(main);
+  main.dataset.view = current;
+  if (same) window.scrollTo(0, y);
+  document.querySelectorAll('.rail a').forEach((a) => { if (a.dataset.view === current) a.setAttribute('aria-current', 'page'); else a.removeAttribute('aria-current'); });
+  chrome();
+}
+function chrome() {
+  const ks = kevStats(), rs = ransomStats(), nw = news();
+  if (D.kev) $('#n-exploited').textContent = N(D.kev.rows.length);
+  if (D.ransomware) $('#n-ransomware').textContent = N(D.ransomware.rows.length);
+  if (D.cves) $('#n-cves').textContent = N(D.cves.rows.length);
+  if (nw) $('#n-news').textContent = N(nw.length);
+  if (D.sports) $('#n-sports').textContent = N(D.sports.rows.length);
+  ticker();
+  const plc = politics();
+  if (plc) {
+    const cnt = (f) => N(plc.filter(f).length);
+    $('#n-president').textContent = cnt((r) => r.branch === 'President');
+    $('#n-congress').textContent = cnt((r) => r.branch === 'Congress');
+    $('#n-intel').textContent = cnt((r) => r.branch === 'Intel & Law');
+    $('#n-courts').textContent = cnt((r) => r.branch === 'Courts');
+    $('#n-world').textContent = cnt((r) => r.branch === 'World');
+  }
+  if (ks && rs) {
+    const lede = $('#lede');
+    lede.replaceChildren(...[].concat('In the latest 30 days CISA confirmed ', h('b', {text: N(ks.n30)}), ' more vulnerabilities exploited in the wild. Ransomware crews posted ',
+      h('b', {text: N(rs.n7)}), ' new victims in the past week',
+      rs.chg == null ? '.' : [', ', h('b', {class: rs.chg > 0 ? 'up' : 'down', text: (rs.chg > 0 ? 'up ' : 'down ') + Math.abs(Math.round(rs.chg * 100)) + '%'}), ' on the week before.'],
+      D.votes?.rows[0] ? [' The latest recorded vote: ', h('b', {text: `${D.votes.rows[0].chamber} roll ${D.votes.rows[0].roll}`}), `, ${D.votes.rows[0].result.toLowerCase()} ${N(D.votes.rows[0].yea)}–${N(D.votes.rows[0].nay)}.`] : []));
+  }
+  const loaded = SETS.filter((s) => D[s]).length, failed = SETS.filter((s) => ERR[s]).length;
+  const gen = SETS.map((s) => D[s]?.generated).filter(Boolean).sort().pop();
+  const dot = $('#live-dot'), lt = $('#live-text');
+  if (loaded + failed < SETS.length) { lt.textContent = `Pulling feeds · ${loaded}/${SETS.length}`; return; }
+  dot.classList.toggle('on', !SNAPSHOT && !failed);
+  lt.textContent = SNAPSHOT ? `Preview snapshot · ${gen ? DATE(gen) + ', ' + gen.slice(11, 16) + ' UTC' : ''}` : failed ? `${failed} source group${failed > 1 ? 's' : ''} unavailable` : `Live · pulled ${gen ? AGO(gen) : 'now'}`;
+}
+window.addEventListener('hashchange', () => { const v = location.hash.slice(1); if (ROUTES.includes(v) && v !== current) { current = v; render(); window.scrollTo({top: 0}); } });
+
+/* clock + theme */
+const tick = () => { const d = new Date(); $('#clock').textContent = d.toISOString().slice(0, 16).replace('T', ' ') + ' UTC'; };
+tick(); setInterval(tick, 30000);
+const root = document.documentElement;
+try { const t = localStorage.getItem('tb-theme'); if (t) root.dataset.theme = t; } catch (e) {}
+$('#theme').addEventListener('click', () => {
+  const dark = root.dataset.theme ? root.dataset.theme === 'dark' : matchMedia('(prefers-color-scheme: dark)').matches;
+  root.dataset.theme = dark ? 'light' : 'dark';
+  try { localStorage.setItem('tb-theme', root.dataset.theme); } catch (e) {}
+});
+
+render();
+SETS.forEach(loadSet);
+})();
+</script>
