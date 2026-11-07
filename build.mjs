@@ -3,6 +3,7 @@ import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from "node
 const body = readFileSync(new URL("./index.html", import.meta.url), "utf8");
 const head = body.match(/^[\s\S]*?(?=<style>)/)[0];
 const rest = body.slice(head.length);
+const BUILD = (process.env.VERCEL_GIT_COMMIT_SHA || Date.now().toString(36)).slice(0, 8);
 const doc = `<!doctype html>
 <html lang="en">
 <head>
@@ -14,7 +15,7 @@ const doc = `<!doctype html>
 ${head.replace('<meta name="claude:viewport-fit-sides" content="cover">\n', "")}<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
 </head>
 <body>
-${rest}
+${rest.replace(/__BUILD__/g, BUILD)}
 </body>
 </html>
 `;

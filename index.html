@@ -521,7 +521,7 @@ let SNAPSHOT = false;
 
 async function loadSet(name) {
   try {
-    const r = await fetch('/api/' + name, {headers: {accept: 'application/json'}});
+    const r = await fetch('/api/' + name + '?v=__BUILD__', {headers: {accept: 'application/json'}});
     if (!r.ok) throw new Error('HTTP ' + r.status);
     D[name] = await r.json();
   } catch (e) {
