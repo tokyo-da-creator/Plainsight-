@@ -1,5 +1,5 @@
 // Wraps index.html into a full document for deployment (public/index.html).
-import { readFileSync, writeFileSync, mkdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, cpSync, existsSync } from "node:fs";
 const body = readFileSync(new URL("./index.html", import.meta.url), "utf8");
 const head = body.match(/^[\s\S]*?(?=<style>)/)[0];
 const rest = body.slice(head.length);
@@ -20,4 +20,5 @@ ${rest}
 `;
 mkdirSync(new URL("./public/", import.meta.url), { recursive: true });
 writeFileSync(new URL("./public/index.html", import.meta.url), doc);
+if (existsSync(new URL("./assets/", import.meta.url))) cpSync(new URL("./assets/", import.meta.url), new URL("./public/assets/", import.meta.url), { recursive: true });
 console.log("public/index.html", doc.length, "bytes");

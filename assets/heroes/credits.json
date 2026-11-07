@@ -1,0 +1,98 @@
+{
+ "brief": {
+  "src": "/assets/heroes/brief.webp",
+  "m": "/assets/heroes/brief-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "Our treasured monuments at night, Washington D.C.",
+  "url": "https://www.loc.gov/item/2011630850/",
+  "rights": "No known restrictions on publication."
+ },
+ "president": {
+  "src": "/assets/heroes/president.webp",
+  "m": "/assets/heroes/president-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "Dusk view of White House, Washington, D.C.",
+  "url": "https://www.loc.gov/item/2011632156/",
+  "rights": "No known restrictions on publication."
+ },
+ "congress": {
+  "src": "/assets/heroes/congress.webp",
+  "m": "/assets/heroes/congress-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "Aerial view, United States Capitol building, Washington, D.C.",
+  "url": "https://www.loc.gov/item/2010630477/",
+  "rights": "No known restrictions on publication."
+ },
+ "courts": {
+  "src": "/assets/heroes/courts.webp",
+  "m": "/assets/heroes/courts-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "U.S. Supreme Court Building, Washington, D.C.",
+  "url": "https://www.loc.gov/item/2011636057/",
+  "rights": "No known restrictions on publication."
+ },
+ "intel": {
+  "src": "/assets/heroes/intel.webp",
+  "m": "/assets/heroes/intel-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "The Robert F. Kennedy Department of Justice Building, sometimes called Main Justice, is the headquarters of the United States Department of Justice",
+  "url": "https://www.loc.gov/item/2025716652/",
+  "rights": "No known restrictions on publication."
+ },
+ "world": {
+  "src": "/assets/heroes/world.webp",
+  "m": "/assets/heroes/world-m.webp",
+  "credit": "NASA",
+  "title": "Earth at night from the International Space Station",
+  "url": "https://images.nasa.gov/details/iss035e017673",
+  "rights": "NASA imagery: public domain, not copyrighted"
+ },
+ "sports": {
+  "src": "/assets/heroes/sports.webp",
+  "m": "/assets/heroes/sports-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "Dodger Stadium, Los Angeles, California",
+  "url": "https://www.loc.gov/item/2013632440/",
+  "rights": "No known restrictions on publication."
+ },
+ "exploited": {
+  "src": "/assets/heroes/exploited.webp",
+  "m": "/assets/heroes/exploited-m.webp",
+  "credit": "NASA",
+  "title": "Earth at night from the International Space Station",
+  "url": "https://images.nasa.gov/details/iss035e013107",
+  "rights": "NASA imagery: public domain, not copyrighted"
+ },
+ "ransomware": {
+  "src": "/assets/heroes/ransomware.webp",
+  "m": "/assets/heroes/ransomware-m.webp",
+  "credit": "NASA",
+  "title": "Earth at night from the International Space Station",
+  "url": "https://images.nasa.gov/details/iss035e008005",
+  "rights": "NASA imagery: public domain, not copyrighted"
+ },
+ "cves": {
+  "src": "/assets/heroes/cves.webp",
+  "m": "/assets/heroes/cves-m.webp",
+  "credit": "NASA",
+  "title": "Earth at night from the International Space Station",
+  "url": "https://images.nasa.gov/details/iss035e017357",
+  "rights": "NASA imagery: public domain, not copyrighted"
+ },
+ "news": {
+  "src": "/assets/heroes/news.webp",
+  "m": "/assets/heroes/news-m.webp",
+  "credit": "NASA",
+  "title": "Earth at night from the International Space Station",
+  "url": "https://images.nasa.gov/details/iss040e091208",
+  "rights": "NASA imagery: public domain, not copyrighted"
+ },
+ "sources": {
+  "src": "/assets/heroes/sources.webp",
+  "m": "/assets/heroes/sources-m.webp",
+  "credit": "Carol M. Highsmith, Library of Congress",
+  "title": "[Main Reading Room. Interior of dome. Library of Congress Thomas Jefferson Building, Washington, D.C.]",
+  "url": "https://www.loc.gov/item/2007684367/",
+  "rights": "No known restrictions on publication."
+ }
+}
