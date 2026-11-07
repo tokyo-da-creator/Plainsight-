@@ -216,7 +216,7 @@ html.reading { overflow: hidden; }
 .tk { color: var(--muted); } .tk i { font-style: normal; color: var(--faint); margin-right: 4px; } .tk em { font-style: normal; color: var(--faint); margin-left: 4px; }
 .tk-live { color: var(--ink); } .tk-live em { color: var(--crit); }
 /* section heads */
-.vhead { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; padding: 4px 0 6px; }
+.vhead:not(.hero) { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; padding: 4px 0 6px; }
 .art { width: clamp(72px, 10vw, 104px); height: auto; stroke: var(--accent); stroke-width: 1.6; stroke-linecap: round; stroke-linejoin: round; }
 .art path { stroke-dasharray: 1; stroke-dashoffset: 0; }
 @media (prefers-reduced-motion: no-preference) { .art path { animation: draw 1.6s cubic-bezier(.6,0,.2,1) both; } @keyframes draw { from { stroke-dashoffset: 1; } } }
@@ -265,6 +265,77 @@ html.reading { overflow: hidden; }
 .stands { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 14px; }
 .stand-h { font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 13px; letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
 .tbox-flat { max-height: none; }
+/* photo heroes */
+:root { --on-photo: #f5f6ef; --on-photo-muted: rgb(245 246 239 / .78); --photo-accent: #b9ef5a; --scrim: rgb(6 8 4 / .86); }
+.hero { position: relative; display: block; isolation: isolate; border-radius: 8px; overflow: hidden; min-height: clamp(210px, 27vw, 360px); background: #0b0d09; color: var(--on-photo); padding: 0; }
+.hero-frame { position: absolute; inset: -8% 0 0 0; z-index: -2; }
+.hero-img { width: 100%; height: 100%; object-fit: cover; display: block; max-width: none; opacity: 1; }
+.hero-scrim { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(6 8 4 / .05) 0%, rgb(6 8 4 / .25) 40%, var(--scrim) 100%), linear-gradient(90deg, rgb(6 8 4 / .55), transparent 65%); }
+.hero-in { position: absolute; inset: auto 0 0 0; display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: end; padding: clamp(18px, 3.4vw, 36px); }
+.hero .art { stroke: var(--photo-accent); width: clamp(64px, 9vw, 96px); filter: drop-shadow(0 2px 10px rgb(0 0 0 / .5)); }
+.hero .vhead-t h2 { color: var(--on-photo); font-size: clamp(2.3rem, 7vw, 4.6rem); text-shadow: 0 2px 24px rgb(0 0 0 / .45); }
+.hero .vhead-t p { color: var(--on-photo-muted); font-size: clamp(14px, 1.6vw, 17px); text-shadow: 0 1px 10px rgb(0 0 0 / .6); }
+.hero-credit { position: absolute; top: 10px; right: 12px; font-family: var(--mono); font-size: 10.5px; color: var(--on-photo-muted); text-decoration: none; background: rgb(6 8 4 / .45); padding: 2px 7px; border-radius: 3px; max-width: 70%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.hero-credit:hover { color: var(--on-photo); }
+@media (prefers-reduced-motion: no-preference) {
+  .hero-img { animation: kb 2.4s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes kb { from { transform: scale(1.14); filter: brightness(.6) saturate(.8); } to { transform: scale(1.04); filter: none; } }
+  .hero .vhead-t h2 { animation: up .9s .15s cubic-bezier(.2,.7,.2,1) both; } .hero .vhead-t p { animation: up .9s .3s cubic-bezier(.2,.7,.2,1) both; }
+  @keyframes up { from { opacity: 0; transform: translateY(14px); } }
+}
+@media (max-width: 560px) { .hero-in { grid-template-columns: 1fr; gap: 8px; } .hero .art { width: 54px; } .hero-credit { top: auto; bottom: 8px; right: 8px; font-size: 9.5px; } .hero-in { padding-bottom: 30px; } }
+/* images */
+.pic { display: block; width: 100%; height: 100%; object-fit: cover; opacity: 0; transition: opacity .55s ease, transform 1.1s cubic-bezier(.2,.7,.2,1); transform: scale(1.03); background: var(--sunk); }
+.pic.in { opacity: 1; transform: none; }
+@media (prefers-reduced-motion: reduce) { .pic { opacity: 1; transform: none; transition: none; } }
+/* lead stories */
+.leads { display: grid; grid-template-columns: minmax(0, 1.65fr) minmax(0, 1fr); grid-template-rows: auto auto; gap: var(--gap); }
+.lead { position: relative; display: flex; flex-direction: column; background: var(--surface); border: 1px solid var(--line); border-radius: 7px; overflow: hidden; cursor: pointer; min-width: 0; transition: border-color .2s, transform .25s cubic-bezier(.2,.7,.2,1), box-shadow .25s; }
+.lead:hover, .lead:focus-visible { border-color: var(--muted); transform: translateY(-3px); box-shadow: 0 14px 34px rgb(0 0 0 / .14); }
+.lead-media { position: relative; margin: 0; aspect-ratio: 16 / 9; overflow: hidden; background: var(--sunk); max-width: 100%; }
+.lead-img { transition: opacity .55s ease, transform 1.4s cubic-bezier(.2,.7,.2,1) !important; }
+.lead:hover .lead-img.in { transform: scale(1.045); }
+.lead-cap { position: absolute; right: 8px; bottom: 6px; font-family: var(--mono); font-size: 9.5px; color: var(--on-photo-muted); background: rgb(6 8 4 / .5); padding: 1px 6px; border-radius: 3px; max-width: 80%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lead-t { padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 6px; }
+.lead-k { display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; font-size: 12px; color: var(--muted); }
+.lead-when { font-family: var(--mono); font-size: 11px; color: var(--faint); }
+.lead h3 { margin: 0; font-family: var(--display); font-stretch: 85%; font-weight: 700; font-size: 1.08rem; line-height: 1.2; text-wrap: balance; }
+.lead-big { grid-row: span 2; }
+.lead-big .lead-media { aspect-ratio: auto; flex: 1; min-height: 340px; }
+.lead:not(.lead-big) { flex-direction: row; } .lead:not(.lead-big) .lead-media { width: 42%; flex: none; aspect-ratio: 4 / 3; } .lead:not(.lead-big) .lead-cap { display: none; }
+.lead:not(.lead-big) .lead-t { justify-content: center; }
+.lead-big .lead-t { position: absolute; inset: auto 0 0 0; padding: 70px clamp(16px, 2.6vw, 26px) clamp(16px, 2.4vw, 24px); background: linear-gradient(180deg, transparent, var(--scrim) 55%); color: var(--on-photo); }
+.lead-big .lead-k, .lead-big .lead-when { color: var(--on-photo-muted); }
+.lead-big h3 { font-size: clamp(1.4rem, 2.8vw, 2.1rem); line-height: 1.08; font-stretch: 78%; }
+.lead-big p { margin: 0; color: var(--on-photo-muted); font-size: 14px; max-width: 62ch; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.lead-big .lead-cap { top: 8px; bottom: auto; }
+.lead-fallback .lead-img { filter: saturate(.7) brightness(.85); }
+@media (max-width: 760px) {
+  .leads { grid-template-columns: 1fr; }
+  .lead-big { grid-row: auto; } .lead-big .lead-media { min-height: 260px; }
+  .lead:not(.lead-big) .lead-media { width: 38%; aspect-ratio: 1 / 1; }
+  .lead:not(.lead-big) h3 { font-size: .98rem; }
+}
+/* thumbnails */
+.thumb { margin: 0; width: 100%; aspect-ratio: 4 / 3; border-radius: 4px; overflow: hidden; background: var(--sunk); max-width: 100%; }
+.it.has-thumb { grid-template-columns: 92px minmax(0, 1fr) auto; }
+.it.has-thumb .thumb { grid-row: 1 / span 2; grid-column: 1; align-self: start; }
+.it.has-thumb .it-t, .it.has-thumb .it-m { grid-column: 2; }
+.it.has-thumb .it-r { grid-column: 3; }
+.rec.has-thumb { grid-template-columns: 6.2rem minmax(0, 1fr) 120px; }
+.rec.has-thumb .thumb { align-self: start; }
+@media (max-width: 520px) { .it.has-thumb { grid-template-columns: 72px minmax(0, 1fr); } .it.has-thumb .it-r { grid-column: 2; grid-row: auto; text-align: left; } .rec.has-thumb { grid-template-columns: 1fr 84px; } .rec.has-thumb .rec-d { grid-column: 1 / -1; } }
+/* logos & headshots */
+.tm-logo { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: color-mix(in srgb, var(--tc, var(--line)) 14%, transparent); }
+.tm-logo .pic { width: 24px; height: 24px; object-fit: contain; background: none; }
+.tm-logo.sm { width: 20px; height: 20px; display: inline-grid; vertical-align: -5px; margin-right: 8px; background: none; } .tm-logo.sm .pic { width: 18px; height: 18px; }
+.tm { grid-template-columns: 28px 3.4rem minmax(0, 1fr) auto 2.6rem; }
+.st-team { white-space: nowrap; }
+.fighter { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.hs { width: 30px; height: 30px; border-radius: 50%; overflow: hidden; flex: none; background: var(--sunk); } .hs .pic { object-position: top; }
+.rd-fig { margin: 0; border-radius: 6px; overflow: hidden; position: relative; max-width: 100%; }
+.rd-fig .pic { max-height: 420px; aspect-ratio: 16 / 9; }
+.rd-fig figcaption { font-family: var(--mono); font-size: 10.5px; color: var(--faint); padding: 6px 2px 0; }
 @media (max-width: 760px) { .hide-sm { display: none; } td.sum { min-width: 0; } }
 
 .empty, .loading, .failed { display: flex; align-items: center; justify-content: center; gap: 8px; min-height: inherit; padding: 28px 12px; color: var(--faint); font-family: var(--mono); font-size: 12px; text-align: center; }
@@ -598,6 +669,9 @@ function openReader(item, type, structured) {
   const flagEl = h('div', {class: 'rd-flag', hidden: !loadedT.length});
   const setFlag = (words) => { flagEl.hidden = !words.length; flagEl.replaceChildren(h('b', {text: 'Loaded wording found: '}), words.join(', '), '. These words carry opinion. Plainsight flags them the same way for every source and every side.'); };
   setFlag(loadedT);
+  const readerFig = h('figure', {class: 'rd-fig', hidden: true});
+  const setReaderImg = (src, credit) => { const im = pic(src, '', 'rd-img', {onfail: () => { readerFig.hidden = true; }}); if (!im) return; readerFig.replaceChildren(im, h('figcaption', {text: 'Photo: ' + (credit || item.source || '')})); readerFig.hidden = false; };
+  if (item.image) setReaderImg(item.image, item.credit); else ogFor(item.link).then((src) => { if (src) setReaderImg(src); });
   const sheet = h('div', {class: 'rd', role: 'dialog', 'aria-modal': 'true', 'aria-label': item.title},
     h('div', {class: 'rd-bar'},
       h('button', {class: 'rd-close', type: 'button', 'aria-label': 'Close reader', text: '← Back', onclick: closeReader}),
@@ -606,6 +680,7 @@ function openReader(item, type, structured) {
       h('div', {class: 'rd-grade gr-' + gr.letter}, h('div', {class: 'rd-letter', text: gr.letter}),
         h('div', null, h('div', {class: 'rd-gl', text: gr.label}), h('div', {class: 'rd-gw', text: gr.why}), h('div', {class: 'rd-scale', text: 'A primary record · B official account · C allegation or report · D unverified claim'}))),
       flagEl,
+      readerFig,
       item.kind ? h('div', {class: 'rd-kind'}, h('span', {class: 'chip', text: item.kind})) : null,
       h('h1', {class: 'rd-title', text: item.title}),
       item.detail ? h('p', {class: 'rd-detail', text: item.detail}) : null,
@@ -661,7 +736,8 @@ function stateChip(g) {
   return h('span', {class: 'chip', text: isNaN(d) ? g.detail : d.toLocaleString('en-US', {weekday: 'short', hour: 'numeric', minute: '2-digit'})});
 }
 function teamRow(t, g, otherScore) {
-  const sw = h('span', {class: 'tm-sw', style: t.color ? `background:${t.color}` : ''});
+  const lg = t.logo ? h('span', {class: 'tm-logo', style: t.color ? `--tc:${t.color}` : ''}, pic(t.logo, t.abbr, '')) : null;
+  const sw = lg || h('span', {class: 'tm-sw', style: t.color ? `background:${t.color}` : ''});
   const lead = g.state !== 'pre' && t.score !== '' && otherScore !== '' && +t.score > +otherScore;
   return h('div', {class: 'tm' + (t.winner || (g.state === 'post' && lead) ? ' tm-win' : '')}, sw,
     h('span', {class: 'tm-ab', text: t.abbr}), h('span', {class: 'tm-nm', text: t.name}), h('span', {class: 'tm-rec', text: t.record}),
@@ -678,10 +754,10 @@ function gameCard(g) {
   }
   if (g.kind === 'card') {
     return h('article', {class: 'game game-wide'}, h('div', {class: 'game-h'}, h('span', {text: g.league}), stateChip(g)), h('div', {class: 'game-t', text: g.name}),
-      h('div', {class: 'bouts'}, g.bouts.map((b) => h('div', {class: 'bout'}, h('span', {class: b.a.winner ? 'tm-win' : '', text: b.a.name}), h('span', {class: 'vs', text: 'vs'}), h('span', {class: b.b.winner ? 'tm-win' : '', text: b.b.name}), h('span', {class: 'bout-d', text: b.detail})))));
+      h('div', {class: 'bouts'}, g.bouts.map((b) => h('div', {class: 'bout'}, h('span', {class: 'fighter' + (b.a.winner ? ' tm-win' : '')}, b.a.logo ? h('span', {class: 'hs'}, pic(b.a.logo, '', '')) : null, b.a.name), h('span', {class: 'vs', text: 'vs'}), h('span', {class: 'fighter' + (b.b.winner ? ' tm-win' : '')}, b.b.logo ? h('span', {class: 'hs'}, pic(b.b.logo, '', '')) : null, b.b.name), h('span', {class: 'bout-d', text: b.detail})))));
   }
   return h('article', {class: 'game game-wide'}, h('div', {class: 'game-h'}, h('span', {text: g.league + (g.session ? ' · ' + g.session : '')}), stateChip(g)), h('div', {class: 'game-t', text: g.name}),
-    h('ol', {class: 'field'}, g.leaders.map((t) => h('li', null, h('span', {class: 'pos', text: t.pos ?? ''}), h('span', {text: t.name}), h('span', {class: 'tm-sc', text: t.score || ''})))));
+    h('ol', {class: 'field'}, g.leaders.map((t) => h('li', null, h('span', {class: 'pos', text: t.pos ?? ''}), h('span', {class: 'fighter'}, t.logo ? h('span', {class: 'hs'}, pic(t.logo, '', '')) : null, t.name), h('span', {class: 'tm-sc', text: t.score || ''})))));
 }
 function standingsTable(t) {
   const hasPts = t.rows.some((r) => r.pts !== '' && r.pct === '');
@@ -689,7 +765,7 @@ function standingsTable(t) {
     h('div', {class: 'tbox tbox-flat'}, h('table', null,
       h('thead', null, h('tr', null, ['#', 'Team', 'W', 'L', hasPts ? 'D/OT' : 'T/OT', hasPts ? 'Pts' : 'Pct', 'GB', 'Strk'].map((x, i) => h('th', {class: 'plain' + (i === 6 || i === 7 ? ' hide-sm' : ''), text: x})))),
       h('tbody', null, t.rows.map((r, i) => { const c = r.color || teamColor(r.abbr, t.league); return h('tr', null,
-        h('td', {class: 'mut', text: i + 1}), h('td', null, h('span', {class: 'tm-sw sm', style: c ? `background:${c}` : ''}), ' ', r.team),
+        h('td', {class: 'mut', text: i + 1}), h('td', {class: 'st-team'}, r.logo ? h('span', {class: 'tm-logo sm'}, pic(r.logo, '', '')) : h('span', {class: 'tm-sw sm', style: c ? `background:${c}` : ''}), r.team),
         h('td', {text: r.w}), h('td', {text: r.l}), h('td', {text: r.t || '—'}), h('td', {text: hasPts ? r.pts : r.pct}), h('td', {class: 'hide-sm', text: r.gb || '—'}), h('td', {class: 'hide-sm', text: r.streak || '—'})); })))));
 }
 /* ---------------- section art (original line drawings, drawn on view) ---------------- */
@@ -729,7 +805,15 @@ function sectionHead(key) {
   p.setAttribute('d', ART[key] || ART.brief); p.setAttribute('pathLength', '1'); p.setAttribute('fill', 'none');
   svg.append(p);
   const [t, d] = HEADS[key] || [key, ''];
-  return h('header', {class: 'vhead'}, svg, h('div', {class: 'vhead-t'}, h('h2', {text: t}), h('p', {text: d})));
+  const hp = HERO[key] || HERO.brief;
+  const img = heroPic(key, 'hero-img');
+  if (img) { img.loading = 'eager'; img.fetchPriority = 'high'; }
+  heroImg = img;
+  return h('header', {class: 'vhead hero hero-' + key},
+    h('div', {class: 'hero-frame'}, img),
+    h('div', {class: 'hero-scrim'}),
+    h('div', {class: 'hero-in'}, svg, h('div', {class: 'vhead-t'}, h('h2', {text: t}), h('p', {text: d}))),
+    h('a', {class: 'hero-credit', href: hp.url, target: '_blank', rel: 'noopener noreferrer', text: `${hp.title} · ${hp.credit}`}));
 }
 /* count-up for headline figures, once per view */
 function countUp(root) {
@@ -782,6 +866,74 @@ function ticker() {
   track.style.setProperty('--tk-dur', Math.max(30, items.length * 4) + 's');
   el.replaceChildren(track); el.hidden = false;
 }
+
+/* ---------------- images ---------------- */
+const HERO = {"brief": {"src": "/assets/heroes/brief.webp", "m": "/assets/heroes/brief-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Our treasured monuments at night, Washington D.C.", "url": "https://www.loc.gov/item/2011630850/"}, "president": {"src": "/assets/heroes/president.webp", "m": "/assets/heroes/president-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Dusk view of White House, Washington, D.C.", "url": "https://www.loc.gov/item/2011632156/"}, "congress": {"src": "/assets/heroes/congress.webp", "m": "/assets/heroes/congress-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Aerial view, United States Capitol building, Washington, D.C.", "url": "https://www.loc.gov/item/2010630477/"}, "courts": {"src": "/assets/heroes/courts.webp", "m": "/assets/heroes/courts-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "U.S. Supreme Court Building, Washington, D.C.", "url": "https://www.loc.gov/item/2011636057/"}, "intel": {"src": "/assets/heroes/intel.webp", "m": "/assets/heroes/intel-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "The Robert F. Kennedy Department of Justice Building, sometimes called Main Justice, is the headquarters of the United States Department of Justice", "url": "https://www.loc.gov/item/2025716652/"}, "world": {"src": "/assets/heroes/world.webp", "m": "/assets/heroes/world-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e017673"}, "sports": {"src": "/assets/heroes/sports.webp", "m": "/assets/heroes/sports-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "Dodger Stadium, Los Angeles, California", "url": "https://www.loc.gov/item/2013632440/"}, "exploited": {"src": "/assets/heroes/exploited.webp", "m": "/assets/heroes/exploited-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e013107"}, "ransomware": {"src": "/assets/heroes/ransomware.webp", "m": "/assets/heroes/ransomware-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e008005"}, "cves": {"src": "/assets/heroes/cves.webp", "m": "/assets/heroes/cves-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss035e017357"}, "news": {"src": "/assets/heroes/news.webp", "m": "/assets/heroes/news-m.webp", "credit": "NASA", "title": "Earth at night from the International Space Station", "url": "https://images.nasa.gov/details/iss040e091208"}, "sources": {"src": "/assets/heroes/sources.webp", "m": "/assets/heroes/sources-m.webp", "credit": "Carol M. Highsmith, Library of Congress", "title": "[Main Reading Room. Interior of dome. Library of Congress Thomas Jefferson Building, Washington, D.C.]", "url": "https://www.loc.gov/item/2007684367/"}};
+function pic(src, alt, cls, o = {}) {
+  if (!src || !/^(https:\/\/|\/assets\/)/.test(src)) return null;
+  const i = h('img', {src, alt: alt || '', class: 'pic ' + (cls || ''), loading: o.eager ? 'eager' : 'lazy', decoding: 'async', referrerpolicy: 'no-referrer', srcset: o.srcset || null, sizes: o.sizes || null, fetchpriority: o.eager ? 'high' : null});
+  const done = () => i.classList.add('in');
+  i.addEventListener('load', done);
+  i.addEventListener('error', () => { const f = i.closest('.thumb, .tm-logo, .hs'); if (f) f.remove(); else { i.remove(); o.onfail?.(); } });
+  if (i.complete && i.naturalWidth) done();
+  return i;
+}
+const heroPic = (key, cls) => { const hp = HERO[key] || HERO.brief; return pic(hp.m, '', cls, {srcset: `${hp.m} 900w, ${hp.src} 1800w`, sizes: '(max-width: 900px) 100vw, 1320px'}); };
+const thumb = (r) => (r.image ? h('figure', {class: 'thumb'}, pic(r.image, '', '')) : null);
+const OG = new Map();
+function ogFor(url) {
+  if (!url || !readable(url) || /\.pdf($|\?)/i.test(url)) return Promise.resolve('');
+  if (!OG.has(url)) OG.set(url, fetch('/og?url=' + encodeURIComponent(url)).then((r) => (r.ok ? r.json() : {})).then((j) => j.image || '').catch(() => ''));
+  return OG.get(url);
+}
+// Lead stories: one large photo card and two smaller ones. Items without a photo use the section's own photograph.
+function leadRow(items, key) {
+  items = items.filter(Boolean).sort((a, b) => (b.image ? 1 : 0) - (a.image ? 1 : 0)).slice(0, 3);
+  if (!items.length) return null;
+  return h('section', {class: 'leads', 'aria-label': 'Lead stories'}, items.map((it, i) => leadCard(it, it._t || 'record', key, i === 0)));
+}
+function leadCard(item, type, key, big) {
+  const fig = h('figure', {class: 'lead-media'});
+  const cap = h('figcaption', {class: 'lead-cap'});
+  const open = () => openReader(item, type);
+  const card = h('article', {class: 'lead' + (big ? ' lead-big' : ''), tabindex: 0, onclick: open, onkeydown: (e) => { if (e.key === 'Enter') open(); }},
+    fig,
+    h('div', {class: 'lead-t'},
+      h('div', {class: 'lead-k'}, gradeBadge(grade(item, type)), h('span', {text: item.source}), h('span', {class: 'lead-when', text: item.date ? ((item.date.length === 10) ? SHORT(item.date) : AGO(item.date)) : ''})),
+      h('h3', {text: item.title}),
+      big && (item.summary || item.detail) ? h('p', {text: item.summary || item.detail}) : null));
+  const fallback = () => { fig.replaceChildren(heroPic(key, 'lead-img'), cap); cap.textContent = 'Photo: ' + (HERO[key] || HERO.brief).credit; card.classList.add('lead-fallback'); };
+  const set = (src, credit) => {
+    if (!src) return fallback();
+    const im = pic(src, '', 'lead-img', {onfail: fallback, eager: big});
+    if (!im) return fallback();
+    cap.textContent = 'Photo: ' + (credit || item.credit || item.source);
+    fig.replaceChildren(im, cap);
+  };
+  if (item.image) set(item.image, item.credit);
+  else { fallback(); ogFor(item.link).then((src) => { if (src) set(src, item.source); }); }
+  return card;
+}
+const LEADS = {
+  brief: () => {
+    const sp = (D.sports?.news || []).find((n) => n.image);
+    const pl = politics() || [];
+    const gov = pl.find((r) => r.image) || pl.find((r) => r.branch === 'President' && r.source === 'White House');
+    const sec = (news() || []).find((n) => n.image && n.both) || (news() || []).find((n) => n.image);
+    return leadRow([gov && {...gov, _t: 'record'}, sec && {...sec, date: sec.published, _t: 'news'}, sp && {...sp, date: sp.published, kind: sp.league, _t: 'news'}], 'brief');
+  },
+  president: () => leadRow((politics() || []).filter((r) => r.branch === 'President' && r.source === 'White House').sort((a, b) => (b.image ? 1 : 0) - (a.image ? 1 : 0) || b.date.localeCompare(a.date)).slice(0, 3).map((r) => ({...r, _t: 'record'})), 'president'),
+  world: () => leadRow((politics() || []).filter((r) => r.branch === 'World' && r.image).slice(0, 3).map((r) => ({...r, _t: 'record'})), 'world'),
+  news: () => leadRow((news() || []).filter((r) => r.image).slice(0, 3).map((r) => ({...r, date: r.published, _t: 'news'})), 'news'),
+  sports: () => leadRow((D.sports?.news || []).filter((r) => r.image && (!TS.sportf?.lg || r.league === TS.sportf.lg)).slice(0, 3).map((r) => ({...r, date: r.published, kind: r.league, _t: 'news'})), 'sports'),
+};
+/* parallax on the section photo */
+let heroImg = null;
+addEventListener('scroll', () => {
+  if (!heroImg || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+  const y = Math.min(scrollY, 900);
+  heroImg.style.translate = `0 ${y * 0.18}px`;
+}, {passive: true});
 
 /* ---------------- views ---------------- */
 const VIEWS = {
@@ -1072,7 +1224,8 @@ const VIEWS = {
 };
 function newsItem(r) {
   const ty = r._t || 'news';
-  return h('div', {class: 'it'}, RA(r, ty, 'it-t'), h('div', {class: 'it-m'}, gradeBadge(grade(r, ty), loadedIn(r.title)), h('span', {text: r.source}), ...tagChips(r.tags)), h('div', {class: 'it-r', title: r.date || r.published, text: (r.date || r.published).length === 10 ? SHORT(r.date) : AGO(r.date || r.published)}));
+  const th = thumb(r);
+  return h('div', {class: 'it' + (th ? ' has-thumb' : '')}, th, RA(r, ty, 'it-t'), h('div', {class: 'it-m'}, gradeBadge(grade(r, ty), loadedIn(r.title)), h('span', {text: r.source}), ...tagChips(r.tags)), h('div', {class: 'it-r', title: r.date || r.published, text: (r.date || r.published).length === 10 ? SHORT(r.date) : AGO(r.date || r.published)}));
 }
 function bigfig(k, v, s2) { return h('div', {class: 'fig'}, h('div', {class: 'fig-k', text: k}), h('div', {class: 'fig-v', text: v}), h('div', {class: 'fig-s'}, s2)); }
 const RP = {};
@@ -1096,12 +1249,13 @@ function recordPanel(id, title, note, rows, o = {}) {
 function recordItem(r, o = {}) {
   const ty = o.type || r._t || 'record';
   const d = (r.date || '').slice(0, 10);
-  return h('div', {class: 'rec'},
+  const th = thumb(r);
+  return h('div', {class: 'rec' + (th ? ' has-thumb' : '')},
     h('div', {class: 'rec-d'}, h('span', {class: 'rec-day', text: d ? SHORT(d) : '—'}), h('span', {class: 'rec-br', text: d ? d.slice(0, 4) : r.source})),
     h('div', {class: 'rec-b'},
       h('div', {class: 'rec-k'}, gradeBadge(grade(r, ty), loadedIn(r.title)), h('span', {class: 'chip' + (r.cyber ? ' acc' : ''), text: r.kind}), h('span', {text: r.source})),
       RA(r, ty, 'it-t'),
-      r.detail ? h('div', {class: 'rec-x', text: r.detail}) : null));
+      r.detail ? h('div', {class: 'rec-x', text: r.detail}) : null), th);
 }
 function voteCard(v) {
   const passed = /pass|agreed|confirmed|adopted/i.test(v.result);
@@ -1128,6 +1282,8 @@ function render() {
   const y = window.scrollY;
   const same = main.dataset.view === current;
   const parts = VIEWS[current]();
+  const lead = LEADS[current]?.();
+  if (lead) { const fi = parts.findIndex((x) => x?.classList?.contains('figs')); parts.splice(fi >= 0 ? fi + 1 : (parts[0]?.classList?.contains('vhead') ? 1 : 0), 0, lead); }
   main.replaceChildren(h('div', {class: 'view'}, parts[0]?.classList?.contains('vhead') ? null : sectionHead(current), parts));
   if (!same) countUp(main);
   main.dataset.view = current;
