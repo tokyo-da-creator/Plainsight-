@@ -466,7 +466,12 @@ html.reading { overflow: hidden; }
 .method dt { color: var(--ink); font-weight: 600; } .method dd { margin: 0; max-width: 70ch; }
 @media (max-width: 600px) { .method dl { grid-template-columns: 1fr; gap: 2px; } .method dd { margin-bottom: 10px; } }
 footer { border-top: 1px solid var(--line); font-size: 12px; color: var(--faint); font-family: var(--mono); }
-footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; padding-block: 18px; }
+footer .maker { display: inline-flex; align-items: center; gap: 8px; color: var(--muted); text-decoration: none; }
+footer .maker:hover { color: var(--ink); }
+footer .tuxmark { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; background: radial-gradient(120% 90% at 50% 0%, #4a4a54, #2a2a31 55%, #1c1c21); transition: transform .3s; }
+footer .tuxmark svg { width: 16px; height: auto; display: block; }
+footer .maker:hover .tuxmark { transform: rotate(-6deg) scale(1.08); }
+footer .wrap { display: flex; align-items: center; flex-wrap: wrap; gap: 8px 20px; justify-content: space-between; padding-block: 18px; }
 @media (max-width: 640px) { .mast { grid-template-columns: 1fr; } .asof { text-align: left; } }
 </style>
 
@@ -505,7 +510,7 @@ footer .wrap { display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: s
 
 <footer><div class="wrap">
   <span>Plainsight · public intelligence, pulled live</span>
-  <span>Built by Zero</span>
+  <a class="maker" href="https://www.dev-zero.dev" target="_blank" rel="noopener"><span class="tuxmark" aria-hidden="true"><svg viewBox="296 390 664 466"><path fill="#fff" d="M628.0,392.0L432.0,392.0L498.0,509.0L382.6,500.0L628.0,848.0L873.4,500.0L758.0,509.0L824.0,392.0Z"/><path fill="#0b0b0d" fill-rule="evenodd" d="M306.0,392.0L432.0,392.0L549.0,478.0L628.0,846.0L418.0,530.0L498.0,509.0L338.0,468.0L300.0,404.0Q294.0,394.0 306.0,392.0ZM380.2,500.0L391.0,500.0L626.8,842.0L628.0,852.0ZM950.0,392.0L824.0,392.0L707.0,478.0L628.0,846.0L838.0,530.0L758.0,509.0L918.0,468.0L956.0,404.0Q962.0,394.0 950.0,392.0ZM875.8,500.0L865.0,500.0L629.2,842.0L628.0,852.0ZM525.4,452.0L730.6,452.0L700.7,473.9L628.0,846.0L555.3,473.9ZM579.0,487.0L677.0,487.0L628.0,836.0ZM628,526a15,15 0 1,0 0.01,0ZM628,587a15,15 0 1,0 0.01,0ZM628,649a15,15 0 1,0 0.01,0Z"/></svg></span>Built by Zero</a>
 </div></footer>
 
 <script src="/learn.js"></script>
